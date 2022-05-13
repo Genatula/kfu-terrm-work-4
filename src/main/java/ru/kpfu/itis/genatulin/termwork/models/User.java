@@ -10,28 +10,36 @@ import javax.validation.constraints.Pattern;
 import java.util.Objects;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
 
     @Column(name = "firstname", nullable = false, length = 32)
     private String firstname;
 
     @Pattern(regexp = "^.*(?=.{8,})(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!#$%&? \"]).*$")
-    @Column(name = "password", nullable = false, length = 64)
+    @Column(name = "password", nullable = false, length = 500)
     private String password;
 
     @Email
     @Column(name = "email", nullable = false, unique = true, length = 64)
     private String email;
 
+    @Id
     @Min(value = 3)
-    @Max(value = 15)
-    @Column(name = "username", nullable = false, unique = true, length = 15)
+    @Max(value = 50)
+    @Column(name = "username", nullable = false, unique = true, length = 50)
     private String username;
+
+    @Column(name = "enabled", nullable = false)
+    private Boolean enabled = false;
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
 
     public String getUsername() {
         return username;
@@ -65,20 +73,12 @@ public class User {
         this.firstname = firstname;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         User user = (User) o;
-        return id != null && Objects.equals(id, user.id);
+        return username != null && Objects.equals(username, user.username);
     }
 
     @Override
