@@ -2,11 +2,10 @@ package ru.kpfu.itis.genatulin.termwork.models;
 
 import org.hibernate.Hibernate;
 
-import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Pattern;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
@@ -16,17 +15,13 @@ public class User {
     @Column(name = "firstname", nullable = false, length = 32)
     private String firstname;
 
-    @Pattern(regexp = "^.*(?=.{8,})(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!#$%&? \"]).*$")
     @Column(name = "password", nullable = false, length = 500)
     private String password;
 
-    @Email
     @Column(name = "email", nullable = false, unique = true, length = 64)
     private String email;
 
     @Id
-    @Min(value = 3)
-    @Max(value = 50)
     @Column(name = "username", nullable = false, unique = true, length = 50)
     private String username;
 
