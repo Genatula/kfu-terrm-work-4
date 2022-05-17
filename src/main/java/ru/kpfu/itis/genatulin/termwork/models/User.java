@@ -1,16 +1,26 @@
 package ru.kpfu.itis.genatulin.termwork.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.hibernate.Hibernate;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "users")
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Long id;
 
     @Column(name = "firstname", nullable = false, length = 32)
     private String firstname;
@@ -21,12 +31,26 @@ public class User {
     @Column(name = "email", nullable = false, unique = true, length = 64)
     private String email;
 
-    @Id
     @Column(name = "username", nullable = false, unique = true, length = 50)
     private String username;
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled = false;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Authority> authorities = new LinkedHashSet<>();
+
+    public Long getId() {
+        return id;
+    }
+
+    public Set<Authority> getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(Set<Authority> authorities) {
+        this.authorities = authorities;
+    }
 
     public Boolean getEnabled() {
         return enabled;

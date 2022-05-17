@@ -1,4 +1,4 @@
-package ru.kpfu.itis.genatulin.termwork.security;
+package ru.kpfu.itis.genatulin.termwork.security.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -11,20 +11,20 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.data.repository.query.SecurityEvaluationContextExtension;
 import org.springframework.security.provisioning.UserDetailsManager;
-
-import javax.sql.DataSource;
+import ru.kpfu.itis.genatulin.termwork.repositories.UserRepository;
+import ru.kpfu.itis.genatulin.termwork.security.details.UserDetailsManagerImpl;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private final DataSource dataSource;
+    private final UserRepository userRepository;
 
     @Autowired
-    public SecurityConfiguration(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public SecurityConfiguration(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     public UserDetailsManager users() {
-        return new JdbcUserDetailsManager(dataSource);
+        return new UserDetailsManagerImpl(userRepository);
     }
 
     @Bean
@@ -68,5 +68,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
         daoAuthenticationProvider.setUserDetailsService(userDetailsManager);
         return daoAuthenticationProvider;
+    }
+
+    @Bean
+    public SecurityEvaluationContextExtension securityEvaluationContextExtension() {
+        return new SecurityEvaluationContextExtension();
     }
 }
