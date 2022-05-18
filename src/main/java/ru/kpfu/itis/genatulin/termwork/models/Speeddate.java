@@ -9,6 +9,19 @@ public class Speeddate extends Event {
     @Column(name = "target", nullable = false)
     private Target target;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Long id;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Target getTarget() {
         return target;
     }

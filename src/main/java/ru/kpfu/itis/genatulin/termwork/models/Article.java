@@ -10,16 +10,11 @@ import java.util.Set;
 
 @Entity
 @Table(name = "article")
-public class Article {
+public class Article extends AbstractFeedPost {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-
-    @Min(value = 10)
-    @Max(value = 64)
-    @Column(name = "name", nullable = false, unique = true, length = 64)
-    private String name;
 
     @Lob
     @Min(value = 100)
@@ -69,14 +64,6 @@ public class Article {
 
     public void setBody(String body) {
         this.body = body;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Long getId() {

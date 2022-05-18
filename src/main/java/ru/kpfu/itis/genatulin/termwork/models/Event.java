@@ -8,11 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @MappedSuperclass
-public class Event {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
+public class Event extends AbstractFeedPost {
 
     @Min(value = 10)
     @Column(name = "name", nullable = false, length = 32)
@@ -84,14 +80,6 @@ public class Event {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
 }
