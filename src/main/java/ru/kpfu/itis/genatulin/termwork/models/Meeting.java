@@ -4,17 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "meeting")
+@SequenceGenerator(name = "default_gen", sequenceName = "seq_meeting", allocationSize = 1)
 public class Meeting extends Event {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 }

@@ -1,9 +1,6 @@
 package ru.kpfu.itis.genatulin.termwork.models;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import java.util.Date;
 
 @MappedSuperclass
@@ -17,6 +14,19 @@ public abstract class AbstractFeedPost implements Captionable, Describable, Havi
     @Temporal(TemporalType.DATE)
     @Column(name = "creation_date", nullable = false)
     private Date creationDate;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "default_gen")
+    @Column(name = "id", nullable = false)
+    private Long id;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     @Override
     public Date getCreationDate() {
@@ -32,7 +42,7 @@ public abstract class AbstractFeedPost implements Captionable, Describable, Havi
         return shortDescription;
     }
 
-    public void setDescription(String description) {
+    public void setShortDescription(String description) {
         this.shortDescription = description;
     }
 

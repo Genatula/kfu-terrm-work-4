@@ -10,11 +10,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "article")
+@SequenceGenerator(name = "default_gen", sequenceName = "seq_article", allocationSize = 1)
 public class Article extends AbstractFeedPost {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
 
     @Lob
     @Min(value = 100)
@@ -64,14 +61,6 @@ public class Article extends AbstractFeedPost {
 
     public void setBody(String body) {
         this.body = body;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
 }
