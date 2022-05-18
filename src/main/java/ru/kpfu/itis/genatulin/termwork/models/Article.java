@@ -63,4 +63,8 @@ public class Article extends AbstractFeedPost {
         this.body = body;
     }
 
+    @Override
+    public String getUrlPath() {
+        return "articles";
+    }
 }

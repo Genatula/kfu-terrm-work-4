@@ -17,4 +17,9 @@ public class Speeddate extends Event {
     public void setTarget(Target target) {
         this.target = target;
     }
+
+    @Override
+    public String getUrlPath() {
+        return "speeddates";
+    }
 }

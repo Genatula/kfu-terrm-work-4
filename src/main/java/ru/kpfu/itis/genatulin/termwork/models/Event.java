@@ -8,7 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @MappedSuperclass
-public class Event extends AbstractFeedPost {
+public abstract class Event extends AbstractFeedPost {
 
     @Min(value = 10)
     @Column(name = "name", nullable = false, length = 32)

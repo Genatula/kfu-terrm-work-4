@@ -54,4 +54,6 @@ public abstract class AbstractFeedPost implements Captionable, Describable, Havi
     public void setCaption(String caption) {
         this.caption = caption;
     }
+
+    public abstract String getUrlPath();
 }

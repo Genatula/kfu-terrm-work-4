@@ -7,4 +7,8 @@ import javax.persistence.*;
 @SequenceGenerator(name = "default_gen", sequenceName = "seq_meeting", allocationSize = 1)
 public class Meeting extends Event {
 
+    @Override
+    public String getUrlPath() {
+        return "meetings";
+    }
 }
