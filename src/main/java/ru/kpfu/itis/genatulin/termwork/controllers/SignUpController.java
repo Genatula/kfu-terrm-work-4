@@ -38,10 +38,10 @@ public class SignUpController {
             userService.createUser(form);
             return "redirect:/feed";
         } catch (UserWithUsernameAlreadyExistsException e) {
-            modelMap.addAttribute("username_error_message", "User with such username already exists");
+            modelMap.addAttribute("username_error", true);
             return "register";
         } catch (UserWithEmailAlreadyExistsException e) {
-            modelMap.addAttribute("email_error_message", "User with such email already exists");
+            modelMap.addAttribute("email_error", true);
             return "register";
         }
     }

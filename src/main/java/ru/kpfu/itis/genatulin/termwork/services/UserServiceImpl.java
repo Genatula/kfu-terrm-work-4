@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.kpfu.itis.genatulin.termwork.dto.SignUpForm;
+import ru.kpfu.itis.genatulin.termwork.dto.UpdateForm;
 import ru.kpfu.itis.genatulin.termwork.exceptions.UserWithEmailAlreadyExistsException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.UserWithUsernameAlreadyExistsException;
 import ru.kpfu.itis.genatulin.termwork.models.Authority;
@@ -52,5 +53,26 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean checkIfExistsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public void updateUser(UpdateForm form, String username) throws UserWithUsernameAlreadyExistsException, UserWithEmailAlreadyExistsException {
+        if (checkIfExistsByUsername(form.getUsername())) {
+            throw new UserWithUsernameAlreadyExistsException();
+        }
+        else if (checkIfExistsByEmail(form.getEmail())) {
+            throw new UserWithEmailAlreadyExistsException();
+        }
+        User user = userRepository.getUserByUsername(username);
+        User updatedUser = User.builder()
+                .id(user.getId())
+                .email(form.getEmail().equals("") || form.getEmail() == null ? user.getEmail() : form.getEmail())
+                .username(form.getUsername().equals("") || form.getUsername() == null ? user.getUsername() : form.getUsername())
+                .firstname(form.getFirstname().equals("") || form.getFirstname() == null ? user.getFirstname() : form.getFirstname())
+                .password(form.getPassword().equals("") || form.getPassword() == null ? user.getPassword() : passwordEncoder.encode(form.getPassword()))
+                .authorities(user.getAuthorities())
+                .enabled(user.getEnabled())
+                .build();
+        userRepository.save(updatedUser);
     }
 }
