@@ -6,20 +6,24 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.kpfu.itis.genatulin.termwork.validation.MatchingPasswords;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import javax.validation.constraints.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @MatchingPasswords
 public class SignUpForm extends AbstractFormWithMatchingPasswords {
+    @NotEmpty
+    @NotNull
     private String firstname;
     @Email
+    @NotNull
+    @NotEmpty
     private String email;
     @Min(value = 3)
     @Max(value = 50)
+    @NotEmpty
+    @NotNull
     private String username;
 
     public String getFirstname() {
