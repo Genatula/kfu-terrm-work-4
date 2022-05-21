@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 import ru.kpfu.itis.genatulin.termwork.dto.CreateSpeeddateForm;
+import ru.kpfu.itis.genatulin.termwork.dto.UpdateSpeeddateForm;
 import ru.kpfu.itis.genatulin.termwork.exceptions.SpeeddateDoesNotExistException;
 import ru.kpfu.itis.genatulin.termwork.models.Speeddate;
 import ru.kpfu.itis.genatulin.termwork.services.SpeeddateService;
@@ -34,7 +35,7 @@ public class SpeeddatesController {
         return "speeddates";
     }
 
-    @GetMapping(value = {"/{id}", "/{id}/edit"})
+    @GetMapping(value ="/{id}")
     public String getSpeeddate(ModelMap modelMap, @PathVariable(value = "id") String id) {
         try {
             Speeddate speeddate = speeddateService.getSpeeddate(Long.valueOf(id));
@@ -58,5 +59,26 @@ public class SpeeddatesController {
         speeddateService.createSpeeddate(form);
         redirectAttributesModelMap.addAttribute("created", true);
         return "redirect:/speeddates";
+    }
+
+    @GetMapping(value = "/{id}/edit")
+    public String getSpeeddateEditForm(ModelMap modelMap, @PathVariable(value = "id") String id) {
+        try {
+            Speeddate speeddate = speeddateService.getSpeeddate(Long.valueOf(id));
+            modelMap.addAttribute("speeddate", speeddate);
+            return "speeddate_edit";
+        } catch (SpeeddateDoesNotExistException e) {
+            return "404";
+        }
+    }
+
+    @PostMapping(value = "/{id}/edit")
+    public String updateSpeeddate(@Valid UpdateSpeeddateForm form, @PathVariable(value = "id") String id, BindingResult result, RedirectAttributesModelMap redirectAttributesModelMap) {
+        if (result.hasErrors()) {
+            return "speeddate_edit";
+        }
+        speeddateService.updateSpeeddate(form, Long.valueOf(id));
+        redirectAttributesModelMap.addAttribute("updated", true);
+        return "redirect:/speeddates/" + id;
     }
 }

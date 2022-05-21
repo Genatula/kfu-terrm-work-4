@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import ru.kpfu.itis.genatulin.termwork.dto.CreateMeetingForm;
+import ru.kpfu.itis.genatulin.termwork.dto.UpdateMeetingForm;
 import ru.kpfu.itis.genatulin.termwork.exceptions.MeetingDoesNotExistException;
 import ru.kpfu.itis.genatulin.termwork.models.Meeting;
 import ru.kpfu.itis.genatulin.termwork.repositories.MeetingRepository;
@@ -60,6 +61,21 @@ public class MeetingServiceImpl implements MeetingService {
         meeting.setLocation(form.getLocation());
         meeting.setDescription(form.getDescription());
         meeting.setShortDescription(form.getShortDescription());
+
+        meetingRepository.save(meeting);
+    }
+
+    @Override
+    public void updateMeeting(UpdateMeetingForm form, Long id) {
+        Meeting meeting = meetingRepository.getById(id);
+
+        meeting.setShortDescription(form.getShortDescription());
+        meeting.setLocation(form.getLocation());
+        meeting.setDescription(form.getDescription());
+        meeting.setTime(Time.valueOf(form.getTime()));
+        meeting.setDate(java.sql.Date.valueOf(form.getDate()));
+        meeting.setCaption(form.getName());
+        meeting.setName(form.getName());
 
         meetingRepository.save(meeting);
     }

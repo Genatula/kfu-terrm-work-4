@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import ru.kpfu.itis.genatulin.termwork.dto.CreateSpeeddateForm;
+import ru.kpfu.itis.genatulin.termwork.dto.UpdateSpeeddateForm;
 import ru.kpfu.itis.genatulin.termwork.exceptions.SpeeddateDoesNotExistException;
 import ru.kpfu.itis.genatulin.termwork.models.Speeddate;
 import ru.kpfu.itis.genatulin.termwork.models.Target;
@@ -65,6 +66,22 @@ public class SpeeddateServiceImpl implements SpeeddateService {
         speeddate.setLocation(form.getLocation());
         speeddate.setShortDescription(form.getShortDescription());
         speeddate.setTarget(target);
+
+        speeddateRepository.save(speeddate);
+    }
+
+    @Override
+    public void updateSpeeddate(UpdateSpeeddateForm form, Long id) {
+        Speeddate speeddate = speeddateRepository.getById(id);
+
+        speeddate.setTarget(targetService.getTarget(form.getTarget()));
+        speeddate.setName(form.getName());
+        speeddate.setDescription(form.getDescription());
+        speeddate.setShortDescription(form.getShortDescription());
+        speeddate.setLocation(form.getLocation());
+        speeddate.setTime(Time.valueOf(form.getTime()));
+        speeddate.setDate(java.sql.Date.valueOf(form.getDate()));
+        speeddate.setCaption(form.getName());
 
         speeddateRepository.save(speeddate);
     }

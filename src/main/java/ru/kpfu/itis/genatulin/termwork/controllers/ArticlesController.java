@@ -7,6 +7,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 import ru.kpfu.itis.genatulin.termwork.dto.CreateArticleForm;
+import ru.kpfu.itis.genatulin.termwork.dto.UpdateArticleForm;
 import ru.kpfu.itis.genatulin.termwork.exceptions.ArticleDoesNotExistException;
 import ru.kpfu.itis.genatulin.termwork.models.Article;
 import ru.kpfu.itis.genatulin.termwork.services.ArticleService;
@@ -33,7 +34,7 @@ public class ArticlesController {
         return "articles";
     }
 
-    @GetMapping(value = {"/{id}", "/{id}/edit"})
+    @GetMapping(value = "/{id}")
     public String getArticle(ModelMap modelMap, @PathVariable(value = "id") String id) {
         try {
             Article article = articleService.getArticle(Long.valueOf(id));
@@ -57,5 +58,25 @@ public class ArticlesController {
         articleService.createArticle(form, principal.getName());
         redirectAttributesModelMap.addAttribute("created", true);
         return "redirect:/articles";
+    }
+
+    @GetMapping(value = "/{id}/edit")
+    public String getArticleEditForm(ModelMap modelMap, @PathVariable(value = "id") String id) {
+        try {
+            Article article = articleService.getArticle(Long.valueOf(id));
+            modelMap.addAttribute("article", article);
+            return "article_edit";
+        } catch (ArticleDoesNotExistException e) {
+            return "404";
+        }
+    }
+    @PostMapping(value = "/{id}/edit")
+    public String updateArticle(@Valid UpdateArticleForm form, @PathVariable(value = "id") String id, BindingResult result, RedirectAttributesModelMap redirectAttributesModelMap) {
+        if (result.hasErrors()) {
+            return "article_edit";
+        }
+        articleService.updateArticle(form, Long.valueOf(id));
+        redirectAttributesModelMap.addAttribute("updated", true);
+        return "redirect:/articles/" + id;
     }
 }

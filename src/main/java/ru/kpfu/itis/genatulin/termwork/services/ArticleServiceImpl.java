@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import ru.kpfu.itis.genatulin.termwork.dto.CreateArticleForm;
+import ru.kpfu.itis.genatulin.termwork.dto.UpdateArticleForm;
 import ru.kpfu.itis.genatulin.termwork.exceptions.ArticleDoesNotExistException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.UserDoesNoxExistException;
 import ru.kpfu.itis.genatulin.termwork.models.Article;
@@ -71,5 +72,18 @@ public class ArticleServiceImpl implements ArticleService {
         } catch (UserDoesNoxExistException e) {
             throw new IllegalStateException();
         }
+    }
+
+    @Override
+    public void updateArticle(UpdateArticleForm form, Long id) {
+        Article article = articleRepository.getById(id);
+        Set<Tag> tags = tagService.getTags(form.getTags());
+
+        article.setTags(tags);
+        article.setCaption(form.getCaption());
+        article.setBody(form.getBody());
+        article.setShortDescription(form.getShortDescription());
+
+        articleRepository.save(article);
     }
 }
