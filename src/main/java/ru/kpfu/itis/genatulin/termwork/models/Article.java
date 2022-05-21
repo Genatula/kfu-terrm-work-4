@@ -1,7 +1,10 @@
 package ru.kpfu.itis.genatulin.termwork.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;

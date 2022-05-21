@@ -4,7 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
+import ru.kpfu.itis.genatulin.termwork.dto.CreateSpeeddateForm;
+import ru.kpfu.itis.genatulin.termwork.exceptions.SpeeddateDoesNotExistException;
 import ru.kpfu.itis.genatulin.termwork.models.Speeddate;
 import ru.kpfu.itis.genatulin.termwork.services.SpeeddateService;
 
@@ -25,5 +30,28 @@ public class SpeeddatesController {
         List<Speeddate> speeddates = speeddateService.getSpeeddates();
         modelMap.addAttribute("speeddates", speeddates);
         return "speeddates";
+    }
+
+    @GetMapping(value = {"/{id}", "/{id}/edit"})
+    public String getSpeeddate(ModelMap modelMap, @PathVariable(value = "id") String id) {
+        try {
+            Speeddate speeddate = speeddateService.getSpeeddate(Long.valueOf(id));
+            modelMap.addAttribute("speeddate", speeddate);
+            return "speeddate";
+        } catch (SpeeddateDoesNotExistException e) {
+            return "404";
+        }
+    }
+
+    @GetMapping(value = "/create")
+    public String getCreateForm() {
+        return "speeddate_creat";
+    }
+
+    @PostMapping(value = "/create")
+    public String createSpeeddate(CreateSpeeddateForm form, RedirectAttributesModelMap redirectAttributesModelMap) {
+        speeddateService.createSpeeddate(form);
+        redirectAttributesModelMap.addAttribute("created", true);
+        return "redirect:/speeddates";
     }
 }

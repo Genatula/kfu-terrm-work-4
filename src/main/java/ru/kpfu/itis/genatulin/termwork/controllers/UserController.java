@@ -7,6 +7,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 import ru.kpfu.itis.genatulin.termwork.dto.UpdateForm;
 import ru.kpfu.itis.genatulin.termwork.exceptions.UserWithEmailAlreadyExistsException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.UserWithUsernameAlreadyExistsException;
@@ -42,13 +43,14 @@ public class UserController {
     }
 
     @PostMapping(value = "/edit")
-    public String updateUserInformation(@Valid UpdateForm form, BindingResult result, ModelMap modelMap, Principal principal) {
+    public String updateUserInformation(@Valid UpdateForm form, BindingResult result, ModelMap modelMap, Principal principal, RedirectAttributesModelMap redirectAttributesModelMap) {
         if (result.hasErrors()) {
             return "user_edit";
         }
         try {
             userService.updateUser(form, principal.getName());
-            return "redirect:/user?changed=1";
+            redirectAttributesModelMap.addAttribute("changed", true);
+            return "redirect:/user";
         } catch (UserWithUsernameAlreadyExistsException e) {
             modelMap.addAttribute("username_error", true);
             return "user_edit";

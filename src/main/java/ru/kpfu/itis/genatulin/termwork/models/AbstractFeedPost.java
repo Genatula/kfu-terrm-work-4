@@ -33,7 +33,7 @@ public abstract class AbstractFeedPost implements Captionable, Describable, Havi
         return creationDate;
     }
 
-    public void setDate(Date date) {
+    public void setCreationDate(Date date) {
         this.creationDate = date;
     }
 

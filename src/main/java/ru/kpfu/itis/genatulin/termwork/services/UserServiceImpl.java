@@ -5,6 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.kpfu.itis.genatulin.termwork.dto.SignUpForm;
 import ru.kpfu.itis.genatulin.termwork.dto.UpdateForm;
+import ru.kpfu.itis.genatulin.termwork.exceptions.UserDoesNoxExistException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.UserWithEmailAlreadyExistsException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.UserWithUsernameAlreadyExistsException;
 import ru.kpfu.itis.genatulin.termwork.models.Authority;
@@ -74,5 +75,13 @@ public class UserServiceImpl implements UserService {
                 .enabled(user.getEnabled())
                 .build();
         userRepository.save(updatedUser);
+    }
+
+    @Override
+    public User getUserByUsername(String username) throws UserDoesNoxExistException {
+        if (!checkIfExistsByUsername(username)) {
+            throw new UserDoesNoxExistException();
+        }
+        return userRepository.getUserByUsername(username);
     }
 }
