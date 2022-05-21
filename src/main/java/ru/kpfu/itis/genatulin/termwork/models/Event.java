@@ -10,7 +10,6 @@ import java.util.Set;
 @MappedSuperclass
 public abstract class Event extends AbstractFeedPost {
 
-    @Min(value = 10)
     @Column(name = "name", nullable = false, length = 32)
     private String name;
 
@@ -20,7 +19,6 @@ public abstract class Event extends AbstractFeedPost {
     @Column(name = "time")
     private Time time;
 
-    @Min(value = 10)
     @Column(name = "location", nullable = false)
     private String location;
 

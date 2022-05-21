@@ -17,7 +17,6 @@ import java.util.Set;
 public class Article extends AbstractFeedPost {
 
     @Lob
-    @Min(value = 100)
     @Column(name = "body", nullable = false)
     private String body;
 
