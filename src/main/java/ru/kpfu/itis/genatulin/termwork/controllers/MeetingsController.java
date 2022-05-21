@@ -3,6 +3,7 @@ package ru.kpfu.itis.genatulin.termwork.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +14,7 @@ import ru.kpfu.itis.genatulin.termwork.exceptions.MeetingDoesNotExistException;
 import ru.kpfu.itis.genatulin.termwork.models.Meeting;
 import ru.kpfu.itis.genatulin.termwork.services.MeetingService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -49,7 +51,10 @@ public class MeetingsController {
     }
 
     @PostMapping(value = "/create")
-    public String createMeeting(CreateMeetingForm form, RedirectAttributesModelMap redirectAttributesModelMap) {
+    public String createMeeting(@Valid CreateMeetingForm form, RedirectAttributesModelMap redirectAttributesModelMap, BindingResult result) {
+        if (result.hasErrors()) {
+            return "meeting_create";
+        }
         meetingService.createMeeting(form);
         redirectAttributesModelMap.addAttribute("created", true);
         return "redirect:/meetings";

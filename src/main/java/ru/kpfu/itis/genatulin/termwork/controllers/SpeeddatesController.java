@@ -3,6 +3,7 @@ package ru.kpfu.itis.genatulin.termwork.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +14,7 @@ import ru.kpfu.itis.genatulin.termwork.exceptions.SpeeddateDoesNotExistException
 import ru.kpfu.itis.genatulin.termwork.models.Speeddate;
 import ru.kpfu.itis.genatulin.termwork.services.SpeeddateService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -45,11 +47,14 @@ public class SpeeddatesController {
 
     @GetMapping(value = "/create")
     public String getCreateForm() {
-        return "speeddate_creat";
+        return "speeddate_create";
     }
 
     @PostMapping(value = "/create")
-    public String createSpeeddate(CreateSpeeddateForm form, RedirectAttributesModelMap redirectAttributesModelMap) {
+    public String createSpeeddate(@Valid CreateSpeeddateForm form, RedirectAttributesModelMap redirectAttributesModelMap, BindingResult result) {
+        if (result.hasErrors()) {
+            return "speeddate_create";
+        }
         speeddateService.createSpeeddate(form);
         redirectAttributesModelMap.addAttribute("created", true);
         return "redirect:/speeddates";

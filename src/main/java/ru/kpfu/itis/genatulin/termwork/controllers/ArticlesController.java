@@ -3,6 +3,7 @@ package ru.kpfu.itis.genatulin.termwork.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 import ru.kpfu.itis.genatulin.termwork.dto.CreateArticleForm;
@@ -10,6 +11,7 @@ import ru.kpfu.itis.genatulin.termwork.exceptions.ArticleDoesNotExistException;
 import ru.kpfu.itis.genatulin.termwork.models.Article;
 import ru.kpfu.itis.genatulin.termwork.services.ArticleService;
 
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 
@@ -48,7 +50,10 @@ public class ArticlesController {
     }
 
     @PostMapping(value = "/create")
-    public String createArticle(CreateArticleForm form, Principal principal, RedirectAttributesModelMap redirectAttributesModelMap) {
+    public String createArticle(@Valid CreateArticleForm form, Principal principal, RedirectAttributesModelMap redirectAttributesModelMap, BindingResult result) {
+        if (result.hasErrors()) {
+            return "article_create";
+        }
         articleService.createArticle(form, principal.getName());
         redirectAttributesModelMap.addAttribute("created", true);
         return "redirect:/articles";
