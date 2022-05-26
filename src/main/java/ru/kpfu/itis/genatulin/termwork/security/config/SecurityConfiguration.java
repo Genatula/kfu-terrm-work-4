@@ -1,6 +1,7 @@
 package ru.kpfu.itis.genatulin.termwork.security.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -30,7 +31,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .csrf().disable()
                 .authorizeRequests()
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                           .mvcMatchers("/resources/**", "/", "/about", "/login", "/register", "/forgot").permitAll()
                           .mvcMatchers("/user", "/user/edit", "/feed", "/articles", "/meetings", "/speeddates").authenticated()
                           .mvcMatchers("/articles/{articleId}").access("@articleServiceImpl.checkArticleId(#articleId, authentication)")
@@ -39,10 +42,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                           .mvcMatchers("**/edit").hasRole("ADMIN")
                           .anyRequest().denyAll()
                 .and()
-                .formLogin()
+                .formLogin(form -> form
                         .loginPage("/login")
-                        .permitAll()
-                .and()
+                        .permitAll())
                 .logout()
                 .permitAll()
                 .logoutUrl("/logout")

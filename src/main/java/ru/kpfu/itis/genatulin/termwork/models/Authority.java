@@ -18,7 +18,7 @@ public class Authority implements GrantedAuthority {
     private String authority;
 
     @ManyToOne(cascade = CascadeType.ALL, optional = false)
-    @JoinColumn(name = "username", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     public User getUser() {

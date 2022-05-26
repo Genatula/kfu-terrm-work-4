@@ -29,7 +29,7 @@ public abstract class Event extends AbstractFeedPost {
     @ManyToMany
     @JoinTable(name = "event_participants",
             joinColumns = @JoinColumn(name = "event_id"),
-            inverseJoinColumns = @JoinColumn(name = "users_id"))
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> participants = new LinkedHashSet<>();
 
     public Set<User> getParticipants() {
