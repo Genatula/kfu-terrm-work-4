@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.kpfu.itis.genatulin.termwork.dto.SignUpForm;
@@ -25,12 +26,14 @@ public class SignUpController {
     }
 
     @GetMapping
-    public String getPage() {
+    public String getPage(ModelMap modelMap) {
+        SignUpForm form = new SignUpForm();
+        modelMap.put("form", form);
         return "register";
     }
 
     @PostMapping
-    public String register(@Valid SignUpForm form, BindingResult bindingResult, ModelMap modelMap) {
+    public String register(@Valid @ModelAttribute("form") SignUpForm form, BindingResult bindingResult, ModelMap modelMap) {
         if (bindingResult.hasErrors()) {
             return "register";
         }

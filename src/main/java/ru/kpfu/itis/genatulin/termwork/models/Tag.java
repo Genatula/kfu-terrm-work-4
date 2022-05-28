@@ -4,6 +4,7 @@ import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 import java.util.Objects;
 
 @Entity
@@ -14,7 +15,7 @@ public class Tag {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Min(value = 3)
+    @Size(min = 3)
     @Column(name = "name", nullable = false, unique = true, length = 16)
     private String name;
 

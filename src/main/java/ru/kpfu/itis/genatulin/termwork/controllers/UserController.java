@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 import ru.kpfu.itis.genatulin.termwork.dto.UpdateForm;
+import ru.kpfu.itis.genatulin.termwork.exceptions.UserDoesNoxExistException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.UserWithEmailAlreadyExistsException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.UserWithUsernameAlreadyExistsException;
 import ru.kpfu.itis.genatulin.termwork.models.User;
@@ -36,8 +37,8 @@ public class UserController {
     }
 
     @GetMapping(value = "/edit")
-    public String getUserEditPage(Principal principal, ModelMap modelMap) {
-        User user = ((UserDetailsImpl) principal).getUser();
+    public String getUserEditPage(Principal principal, ModelMap modelMap) throws UserDoesNoxExistException {
+        User user = userService.getUserByUsername(principal.getName());
         modelMap.addAttribute("user", user);
         return "user_edit";
     }

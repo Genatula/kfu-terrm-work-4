@@ -4,6 +4,7 @@ import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 import java.sql.Date;
 import java.util.Objects;
 
@@ -15,7 +16,7 @@ public class Comment {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Min(value = 1)
+    @Size(min = 1)
     @Column(name = "body", nullable = false)
     private String body;
 

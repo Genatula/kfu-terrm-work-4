@@ -43,6 +43,7 @@ public class UserServiceImpl implements UserService {
                 .username(form.getUsername())
                 .authorities(Set.of(authority))
                 .build();
+        authority.setUser(user);
         userRepository.save(user);
     }
 

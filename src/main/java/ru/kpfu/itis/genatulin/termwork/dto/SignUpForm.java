@@ -2,28 +2,27 @@ package ru.kpfu.itis.genatulin.termwork.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.kpfu.itis.genatulin.termwork.validation.MatchingPasswords;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@MatchingPasswords
+@MatchingPasswords(message = "Passwords must match")
 public class SignUpForm extends AbstractFormWithMatchingPasswords {
-    @NotEmpty
-    @NotNull
+    @NotEmpty(message = "Firstname must not be empty")
+    @NotNull(message = "Firstname must not be empty")
     private String firstname;
-    @Email
-    @NotNull
-    @NotEmpty
+    @Email(message = "Invalid email format")
+    @NotNull(message = "Email must not be empty")
+    @NotEmpty(message = "Email must not be empty")
     private String email;
-    @Min(value = 3)
-    @Max(value = 50)
-    @NotEmpty
-    @NotNull
+    @Size(min = 3, max = 50)
     private String username;
 
     public String getFirstname() {
