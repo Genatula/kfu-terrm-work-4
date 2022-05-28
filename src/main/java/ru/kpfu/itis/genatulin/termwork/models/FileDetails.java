@@ -9,7 +9,6 @@ import java.util.Objects;
 @Entity
 @Table(name = "file_details")
 @Builder
-@RequiredArgsConstructor
 @NoArgsConstructor
 @AllArgsConstructor
 public class FileDetails {

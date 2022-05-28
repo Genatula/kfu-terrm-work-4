@@ -33,17 +33,6 @@ public class Article extends AbstractFeedPost {
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
-    @Column(name = "post_image_name", nullable = false, unique = true)
-    private String postImageName;
-
-    public String getPostImageName() {
-        return postImageName;
-    }
-
-    public void setPostImageName(String postImageName) {
-        this.postImageName = postImageName;
-    }
-
     public List<Comment> getComments() {
         return comments;
     }

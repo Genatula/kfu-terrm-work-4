@@ -46,6 +46,18 @@ public class User {
     @LazyCollection(LazyCollectionOption.FALSE)
     private Set<Authority> authorities = new LinkedHashSet<>();
 
+    @OneToOne(optional = false, orphanRemoval = true)
+    @JoinColumn(name = "profile_image_id", nullable = false, unique = true)
+    private FileDetails profileImage;
+
+    public FileDetails getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(FileDetails profileImage) {
+        this.profileImage = profileImage;
+    }
+
     public Long getId() {
         return id;
     }

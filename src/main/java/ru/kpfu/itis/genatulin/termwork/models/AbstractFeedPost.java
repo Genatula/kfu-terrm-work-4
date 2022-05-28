@@ -20,6 +20,18 @@ public abstract class AbstractFeedPost implements Captionable, Describable, Havi
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @OneToOne(optional = false, orphanRemoval = true)
+    @JoinColumn(name = "image_id", nullable = false)
+    private FileDetails image;
+
+    public FileDetails getImage() {
+        return image;
+    }
+
+    public void setImage(FileDetails image) {
+        this.image = image;
+    }
+
     public Long getId() {
         return id;
     }

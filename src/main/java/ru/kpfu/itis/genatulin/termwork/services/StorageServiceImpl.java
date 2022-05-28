@@ -7,24 +7,29 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.kpfu.itis.genatulin.termwork.exceptions.IncorrectExtensionException;
 import ru.kpfu.itis.genatulin.termwork.models.FileDetails;
+import ru.kpfu.itis.genatulin.termwork.models.User;
 import ru.kpfu.itis.genatulin.termwork.repositories.FileDetailsRepository;
+import ru.kpfu.itis.genatulin.termwork.repositories.UserRepository;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.UUID;
 
 @Service
 public class StorageServiceImpl implements StorageService {
     private static final String[] imageExtension = new String[]{".jpg", ".png"};
 
     private final FileDetailsRepository fileDetailsRepository;
+    private final UserRepository userRepository;
 
     @Value("${storage.images.path}")
     private String storagePath;
 
     @Autowired
-    public StorageServiceImpl(FileDetailsRepository fileDetailsRepository) {
+    public StorageServiceImpl(FileDetailsRepository fileDetailsRepository, UserRepository userRepository) {
         this.fileDetailsRepository = fileDetailsRepository;
+        this.userRepository = userRepository;
     }
 
     @Transactional
@@ -47,14 +52,15 @@ public class StorageServiceImpl implements StorageService {
 
     @Transactional
     @Override
-    public void uploadUserImage(MultipartFile file) {
-
+    public void uploadUserImage(MultipartFile file) throws IncorrectExtensionException {
+        User user = userRepository.getCurrentUser();
+        uploadImage(file, user.getUsername());
     }
 
     @Transactional
     @Override
-    public void uploadImage(MultipartFile file) {
-
+    public void uploadImage(MultipartFile file) throws IncorrectExtensionException {
+        uploadImage(file, UUID.randomUUID().toString());
     }
 
     @Transactional
