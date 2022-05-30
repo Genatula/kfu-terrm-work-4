@@ -4,25 +4,32 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import javax.validation.constraints.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
 public class CreateSpeeddateForm {
-    @Min(value = 10)
-    @Max(value = 64)
+    @Size(min = 10, max = 64, message = "The caption must be from 10 to 64 characters long")
     private String name;
+    @NotNull
+    @NotEmpty
     private String date;
+    @NotNull
+    @NotEmpty
     private String time;
+    @NotNull
+    @NotEmpty
     private String location;
-    @Min(value = 100)
+    @Size(min = 100, message = "The body must consist of at least 100 characters")
     private String description;
-    @Min(value = 20)
-    @Max(value = 100)
+    @Size(min = 20, max = 100, message = "The description must be from 20 to 100 characters long")
     private String shortDescription;
+    @NotNull
+    @NotEmpty
     private String target;
+    private MultipartFile file;
 }

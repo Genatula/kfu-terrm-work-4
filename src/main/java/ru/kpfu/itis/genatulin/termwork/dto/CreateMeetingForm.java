@@ -4,21 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
 public class CreateMeetingForm {
-    @Min(value = 10)
-    @Max(value = 64)
-    @NotNull
-    @NotEmpty
+    @Size(min = 10, max = 64, message = "The caption must be from 10 to 64 characters long")
     private String name;
     @NotNull
     @NotEmpty
@@ -29,13 +24,9 @@ public class CreateMeetingForm {
     @NotNull
     @NotEmpty
     private String location;
-    @Min(value = 100)
-    @NotNull
-    @NotEmpty
+    @Size(min = 100, message = "The body must consist of at least 100 characters")
     private String description;
-    @Min(value = 20)
-    @Max(value = 100)
-    @NotNull
-    @NotEmpty
+    @Size(min = 20, max = 100, message = "The short description must be from 20 to 100 characters long")
     private String shortDescription;
+    private MultipartFile file;
 }

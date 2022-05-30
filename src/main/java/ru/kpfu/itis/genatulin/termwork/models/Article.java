@@ -16,8 +16,7 @@ import java.util.Set;
 @SequenceGenerator(name = "default_gen", sequenceName = "seq_article", allocationSize = 1)
 public class Article extends AbstractFeedPost {
 
-    @Lob
-    @Column(name = "body", nullable = false)
+    @Column(name = "body", nullable = false, columnDefinition = "TEXT")
     private String body;
 
     @ManyToOne(cascade = CascadeType.ALL, optional = false)
@@ -68,5 +67,15 @@ public class Article extends AbstractFeedPost {
     @Override
     public String getUrlPath() {
         return "articles";
+    }
+
+    @Override
+    public String toString() {
+        return "Article{" +
+                "body='" + body + '\'' +
+                ", author=" + author +
+                ", tags=" + tags +
+                ", comments=" + comments +
+                '}';
     }
 }

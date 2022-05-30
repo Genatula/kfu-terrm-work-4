@@ -52,7 +52,7 @@
                         <#if actibeTab == "speeddates">
                             <a class="nav-link px-2 link-secondary" href="<@spring.url '/speeddates'/>">Speed dates</a>
                         <#else>
-                            <a class="nav-link px-2 link-dark" href="<@spring.url '/feed'/>">Speed dates</a>
+                            <a class="nav-link px-2 link-dark" href="<@spring.url '/speeddates'/>">Speed dates</a>
                         </#if>
                     </li>
                 </ul>

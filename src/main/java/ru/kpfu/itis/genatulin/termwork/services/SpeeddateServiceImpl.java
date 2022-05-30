@@ -3,8 +3,13 @@ package ru.kpfu.itis.genatulin.termwork.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import ru.kpfu.itis.genatulin.termwork.converters.TargetConverter;
+import ru.kpfu.itis.genatulin.termwork.converters.TimeConverter;
 import ru.kpfu.itis.genatulin.termwork.dto.CreateSpeeddateForm;
 import ru.kpfu.itis.genatulin.termwork.dto.UpdateSpeeddateForm;
+import ru.kpfu.itis.genatulin.termwork.exceptions.EmptyFileException;
+import ru.kpfu.itis.genatulin.termwork.exceptions.FileDoesNotExistException;
+import ru.kpfu.itis.genatulin.termwork.exceptions.IncorrectExtensionException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.SpeeddateDoesNotExistException;
 import ru.kpfu.itis.genatulin.termwork.models.Speeddate;
 import ru.kpfu.itis.genatulin.termwork.models.Target;
@@ -18,11 +23,17 @@ import java.util.List;
 public class SpeeddateServiceImpl implements SpeeddateService {
     private final SpeeddateRepository speeddateRepository;
     private final TargetService targetService;
+    private final StorageService storageService;
+    private final TimeConverter timeConverter;
+    private final TargetConverter targetConverter;
 
     @Autowired
-    public SpeeddateServiceImpl(SpeeddateRepository speeddateRepository, TargetService targetService) {
+    public SpeeddateServiceImpl(SpeeddateRepository speeddateRepository, TargetService targetService, StorageService storageService, TimeConverter timeConverter, TargetConverter targetConverter) {
         this.speeddateRepository = speeddateRepository;
         this.targetService = targetService;
+        this.storageService = storageService;
+        this.timeConverter = timeConverter;
+        this.targetConverter = targetConverter;
     }
 
     @Override
@@ -53,21 +64,26 @@ public class SpeeddateServiceImpl implements SpeeddateService {
     }
 
     @Override
-    public void createSpeeddate(CreateSpeeddateForm form) {
-        Speeddate speeddate = new Speeddate();
-        Target target = targetService.getTarget(form.getTarget());
+    public void createSpeeddate(CreateSpeeddateForm form) throws EmptyFileException, IncorrectExtensionException {
+        try {
+            Speeddate speeddate = new Speeddate();
+            Target target = targetConverter.convert(form.getTarget());
+            String filename = storageService.uploadImage(form.getFile());
 
-        speeddate.setCaption(form.getName());
-        speeddate.setName(form.getName());
-        speeddate.setCreationDate(new Date());
-        speeddate.setDate(java.sql.Date.valueOf(form.getDate()));
-        speeddate.setTime(Time.valueOf(form.getTime()));
-        speeddate.setDescription(form.getDescription());
-        speeddate.setLocation(form.getLocation());
-        speeddate.setShortDescription(form.getShortDescription());
-        speeddate.setTarget(target);
-
-        speeddateRepository.save(speeddate);
+            speeddate.setCaption(form.getName());
+            speeddate.setName(form.getName());
+            speeddate.setCreationDate(new Date());
+            speeddate.setDate(java.sql.Date.valueOf(form.getDate()));
+            speeddate.setTime(timeConverter.convert(form.getTime()));
+            speeddate.setDescription(form.getDescription());
+            speeddate.setLocation(form.getLocation());
+            speeddate.setShortDescription(form.getShortDescription());
+            speeddate.setTarget(target);
+            speeddate.setImage(storageService.getFileByName(filename));
+            speeddateRepository.save(speeddate);
+        } catch (FileDoesNotExistException e) {
+            throw new IllegalStateException();
+        }
     }
 
     @Override

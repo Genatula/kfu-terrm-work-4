@@ -20,10 +20,18 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public Set<Tag> getTags(Set<String> tags) {
+        if (tags == null) {
+            return new LinkedHashSet<>();
+        }
         Set<Tag> tagSet = new LinkedHashSet<>();
         for (String tag : tags) {
-            tagSet.add(tagRepository.getTagByName(tag.toLowerCase(Locale.ROOT)));
+            tagSet.add(tagRepository.getTagByName(tag));
         }
         return tagSet;
+    }
+
+    @Override
+    public Set<Tag> getTags() {
+        return new LinkedHashSet<>(tagRepository.findAll());
     }
 }

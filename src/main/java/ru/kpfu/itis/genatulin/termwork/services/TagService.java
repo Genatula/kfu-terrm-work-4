@@ -6,4 +6,5 @@ import java.util.Set;
 
 public interface TagService {
     Set<Tag> getTags(Set<String> tags);
+    Set<Tag> getTags();
 }

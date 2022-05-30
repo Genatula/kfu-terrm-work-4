@@ -18,11 +18,13 @@ import java.util.Set;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final StorageService storageService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, StorageService storageService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.storageService = storageService;
     }
 
     @Override
@@ -34,7 +36,7 @@ public class UserServiceImpl implements UserService {
             throw new UserWithEmailAlreadyExistsException();
         }
         Authority authority = new Authority();
-        authority.setAuthority("USER");
+        authority.setAuthority("ROLE_ADMIN");
         User user = User.builder()
                 .email(form.getEmail())
                 .firstname(form.getFirstname())

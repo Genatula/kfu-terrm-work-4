@@ -3,8 +3,12 @@ package ru.kpfu.itis.genatulin.termwork.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import ru.kpfu.itis.genatulin.termwork.converters.TimeConverter;
 import ru.kpfu.itis.genatulin.termwork.dto.CreateMeetingForm;
 import ru.kpfu.itis.genatulin.termwork.dto.UpdateMeetingForm;
+import ru.kpfu.itis.genatulin.termwork.exceptions.EmptyFileException;
+import ru.kpfu.itis.genatulin.termwork.exceptions.FileDoesNotExistException;
+import ru.kpfu.itis.genatulin.termwork.exceptions.IncorrectExtensionException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.MeetingDoesNotExistException;
 import ru.kpfu.itis.genatulin.termwork.models.Meeting;
 import ru.kpfu.itis.genatulin.termwork.repositories.MeetingRepository;
@@ -16,10 +20,14 @@ import java.util.List;
 @Service
 public class MeetingServiceImpl implements MeetingService {
     private final MeetingRepository meetingRepository;
+    private final StorageService storageService;
+    private final TimeConverter timeConverter;
 
     @Autowired
-    public MeetingServiceImpl(MeetingRepository meetingRepository) {
+    public MeetingServiceImpl(MeetingRepository meetingRepository, StorageService storageService, TimeConverter timeConverter) {
         this.meetingRepository = meetingRepository;
+        this.storageService = storageService;
+        this.timeConverter = timeConverter;
     }
 
     @Override
@@ -50,19 +58,25 @@ public class MeetingServiceImpl implements MeetingService {
     }
 
     @Override
-    public void createMeeting(CreateMeetingForm form) {
-        Meeting meeting = new Meeting();
+    public void createMeeting(CreateMeetingForm form) throws EmptyFileException, IncorrectExtensionException {
+        try {
+            Meeting meeting = new Meeting();
+            String filename = storageService.uploadImage(form.getFile());
 
-        meeting.setCaption(form.getName());
-        meeting.setName(form.getName());
-        meeting.setCreationDate(new Date());
-        meeting.setDate(java.sql.Date.valueOf(form.getDate()));
-        meeting.setTime(Time.valueOf(form.getTime()));
-        meeting.setLocation(form.getLocation());
-        meeting.setDescription(form.getDescription());
-        meeting.setShortDescription(form.getShortDescription());
+            meeting.setCaption(form.getName());
+            meeting.setName(form.getName());
+            meeting.setCreationDate(new Date());
+            meeting.setDate(java.sql.Date.valueOf(form.getDate()));
+            meeting.setTime(timeConverter.convert(form.getTime()));
+            meeting.setLocation(form.getLocation());
+            meeting.setDescription(form.getDescription());
+            meeting.setShortDescription(form.getShortDescription());
+            meeting.setImage(storageService.getFileByName(filename));
 
-        meetingRepository.save(meeting);
+            meetingRepository.save(meeting);
+        } catch (FileDoesNotExistException e) {
+            throw new IllegalStateException();
+        }
     }
 
     @Override

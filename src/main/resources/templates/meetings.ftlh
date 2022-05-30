@@ -8,7 +8,7 @@
             <#list meetings as meeting>
                 <div class="col">
                     <div class="card shadow-sm">
-                        <img src="<@spring.url '/images/' + meeting.getImage().getFilename() + '.' + meeting.getImage().getExtension()/>" class="bd-placeholder-img card-img-top" height="225" width="100%">
+                        <img src="<@spring.url '/images/' + meeting.getImage().getFilename() + meeting.getImage().getExtension()/>" class="bd-placeholder-img card-img-top" height="225" width="100%">
                         <div class="card-body">
                             <h3 class="card-header">${meeting.getCaption()}</h3>
                             <p class="card-text">${meeting.getShortDescription()}</p>

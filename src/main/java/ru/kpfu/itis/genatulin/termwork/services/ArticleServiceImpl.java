@@ -5,8 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import ru.kpfu.itis.genatulin.termwork.dto.CreateArticleForm;
 import ru.kpfu.itis.genatulin.termwork.dto.UpdateArticleForm;
-import ru.kpfu.itis.genatulin.termwork.exceptions.ArticleDoesNotExistException;
-import ru.kpfu.itis.genatulin.termwork.exceptions.UserDoesNoxExistException;
+import ru.kpfu.itis.genatulin.termwork.exceptions.*;
 import ru.kpfu.itis.genatulin.termwork.models.Article;
 import ru.kpfu.itis.genatulin.termwork.models.Tag;
 import ru.kpfu.itis.genatulin.termwork.repositories.ArticleRepository;
@@ -20,12 +19,14 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleRepository articleRepository;
     private final UserService userService;
     private final TagService tagService;
+    private final StorageService storageService;
 
     @Autowired
-    public ArticleServiceImpl(ArticleRepository articleRepository, UserService userService, TagService tagService) {
+    public ArticleServiceImpl(ArticleRepository articleRepository, UserService userService, TagService tagService, StorageService storageService) {
         this.articleRepository = articleRepository;
         this.userService = userService;
         this.tagService = tagService;
+        this.storageService = storageService;
     }
 
     @Override
@@ -56,10 +57,12 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public void createArticle(CreateArticleForm form, String username) {
+    public void createArticle(CreateArticleForm form, String username) throws IncorrectExtensionException, EmptyFileException {
         Set<Tag> tags = tagService.getTags(form.getTags());
         try {
             Article article = new Article();
+
+            String filename = storageService.uploadImage(form.getFile());
 
             article.setAuthor(userService.getUserByUsername(username));
             article.setBody(form.getBody());
@@ -67,9 +70,10 @@ public class ArticleServiceImpl implements ArticleService {
             article.setCaption(form.getCaption());
             article.setCreationDate(new Date());
             article.setShortDescription(form.getShortDescription());
+            article.setImage(storageService.getFileByName(filename));
 
             articleRepository.save(article);
-        } catch (UserDoesNoxExistException e) {
+        } catch (UserDoesNoxExistException | FileDoesNotExistException e) {
             throw new IllegalStateException();
         }
     }
