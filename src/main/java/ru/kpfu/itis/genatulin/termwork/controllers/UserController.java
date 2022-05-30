@@ -5,10 +5,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 import ru.kpfu.itis.genatulin.termwork.dto.UpdateForm;
+import ru.kpfu.itis.genatulin.termwork.dto.UpdatePasswordForm;
+import ru.kpfu.itis.genatulin.termwork.exceptions.IncorrectPasswordException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.UserDoesNoxExistException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.UserWithEmailAlreadyExistsException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.UserWithUsernameAlreadyExistsException;
@@ -30,8 +33,8 @@ public class UserController {
     }
 
     @GetMapping
-    public String getUserPage(Principal principal, ModelMap modelMap) {
-        User user = ((UserDetailsImpl) principal).getUser();
+    public String getUserPage(ModelMap modelMap) {
+        User user = userService.getCurrentUser();
         modelMap.addAttribute("user", user);
         return "user";
     }
@@ -39,12 +42,18 @@ public class UserController {
     @GetMapping(value = "/edit")
     public String getUserEditPage(Principal principal, ModelMap modelMap) throws UserDoesNoxExistException {
         User user = userService.getUserByUsername(principal.getName());
+        UpdateForm form = new UpdateForm();
+        form.setEmail(user.getEmail());
+        form.setFirstname(user.getFirstname());
+        form.setUsername(user.getUsername());
+
         modelMap.addAttribute("user", user);
+        modelMap.addAttribute("form", form);
         return "user_edit";
     }
 
     @PostMapping(value = "/edit")
-    public String updateUserInformation(@Valid UpdateForm form, BindingResult result, ModelMap modelMap, Principal principal, RedirectAttributesModelMap redirectAttributesModelMap) {
+    public String updateUserInformation(@Valid @ModelAttribute("form") UpdateForm form, BindingResult result, ModelMap modelMap, Principal principal, RedirectAttributesModelMap redirectAttributesModelMap) {
         if (result.hasErrors()) {
             return "user_edit";
         }
@@ -58,6 +67,26 @@ public class UserController {
         } catch (UserWithEmailAlreadyExistsException e) {
             modelMap.addAttribute("email_error", true);
             return "user_edit";
+        }
+    }
+
+    @GetMapping(value = "/edit/password")
+    public String getEditPasswordForm(ModelMap modelMap) {
+        modelMap.addAttribute("form", new UpdatePasswordForm());
+        return "user_password";
+    }
+
+    @PostMapping(value = "/edit/password")
+    public String editPassword(@Valid @ModelAttribute("form") UpdatePasswordForm form, BindingResult result, ModelMap modelMap) {
+        if (result.hasErrors()) {
+            return "user_password";
+        }
+        try {
+            userService.updatePassword(form);
+            return "redirect:/user";
+        } catch (IncorrectPasswordException e) {
+            modelMap.addAttribute("old_password_error", true);
+            return "user_password";
         }
     }
 }

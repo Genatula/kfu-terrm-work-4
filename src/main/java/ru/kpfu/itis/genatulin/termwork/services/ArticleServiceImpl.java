@@ -3,9 +3,11 @@ package ru.kpfu.itis.genatulin.termwork.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import ru.kpfu.itis.genatulin.termwork.dto.CommentForm;
 import ru.kpfu.itis.genatulin.termwork.dto.CreateArticleForm;
 import ru.kpfu.itis.genatulin.termwork.dto.UpdateArticleForm;
+import ru.kpfu.itis.genatulin.termwork.dto.UpdateImageForm;
 import ru.kpfu.itis.genatulin.termwork.exceptions.*;
 import ru.kpfu.itis.genatulin.termwork.models.Article;
 import ru.kpfu.itis.genatulin.termwork.models.Comment;
@@ -105,5 +107,13 @@ public class ArticleServiceImpl implements ArticleService {
         article.getComments().add(comment);
 
         articleRepository.save(article);
+    }
+
+    @Override
+    public void updateImage(UpdateImageForm form, Long id) throws EmptyFileException {
+        Article article = articleRepository.getById(id);
+        MultipartFile file = form.getFile();
+
+        storageService.updateImage(file, article.getImage().getFilename());
     }
 }

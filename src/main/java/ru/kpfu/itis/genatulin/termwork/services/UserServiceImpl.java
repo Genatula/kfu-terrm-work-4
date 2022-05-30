@@ -5,6 +5,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.kpfu.itis.genatulin.termwork.dto.SignUpForm;
 import ru.kpfu.itis.genatulin.termwork.dto.UpdateForm;
+import ru.kpfu.itis.genatulin.termwork.dto.UpdatePasswordForm;
+import ru.kpfu.itis.genatulin.termwork.exceptions.IncorrectPasswordException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.UserDoesNoxExistException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.UserWithEmailAlreadyExistsException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.UserWithUsernameAlreadyExistsException;
@@ -68,16 +70,10 @@ public class UserServiceImpl implements UserService {
             throw new UserWithEmailAlreadyExistsException();
         }
         User user = userRepository.getUserByUsername(username);
-        User updatedUser = User.builder()
-                .id(user.getId())
-                .email(form.getEmail().equals("") || form.getEmail() == null ? user.getEmail() : form.getEmail())
-                .username(form.getUsername().equals("") || form.getUsername() == null ? user.getUsername() : form.getUsername())
-                .firstname(form.getFirstname().equals("") || form.getFirstname() == null ? user.getFirstname() : form.getFirstname())
-                .password(form.getPassword().equals("") || form.getPassword() == null ? user.getPassword() : passwordEncoder.encode(form.getPassword()))
-                .authorities(user.getAuthorities())
-                .enabled(user.getEnabled())
-                .build();
-        userRepository.save(updatedUser);
+        user.setEmail(form.getEmail());
+        user.setUsername(form.getUsername());
+        user.setFirstname(form.getFirstname());
+        userRepository.save(user);
     }
 
     @Override
@@ -91,5 +87,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getCurrentUser() {
         return userRepository.getCurrentUser();
+    }
+
+    @Override
+    public void updatePassword(UpdatePasswordForm form) throws IncorrectPasswordException {
+        if (!passwordEncoder.matches(form.getOldPassword(), userRepository.getCurrentUser().getPassword())) {
+            throw new IncorrectPasswordException();
+        }
+        User user = userRepository.getCurrentUser();
+        user.setPassword(passwordEncoder.encode(form.getPassword()));
+        userRepository.save(user);
     }
 }

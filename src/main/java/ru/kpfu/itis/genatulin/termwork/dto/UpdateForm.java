@@ -1,21 +1,15 @@
 package ru.kpfu.itis.genatulin.termwork.dto;
 
-import ru.kpfu.itis.genatulin.termwork.validation.MatchingPasswords;
-import ru.kpfu.itis.genatulin.termwork.validation.OneFilledField;
+import javax.validation.constraints.*;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-
-@MatchingPasswords
-@OneFilledField
-public class UpdateForm extends AbstractFormWithMatchingPasswords {
-    @Email
+public class UpdateForm {
+    @Email(message = "Invalid email format")
     private String email;
+    @NotEmpty
+    @NotNull
     private String firstname;
-    private String oldPassword;
-    @Min(value = 3)
-    @Max(value = 50)
+
+    @Size(min = 3, max = 64, message = "Username must be from 3 to 64 characters long")
     private String username;
 
     public String getEmail() {
@@ -34,13 +28,6 @@ public class UpdateForm extends AbstractFormWithMatchingPasswords {
         this.firstname = firstname;
     }
 
-    public String getOldPassword() {
-        return oldPassword;
-    }
-
-    public void setOldPassword(String oldPassword) {
-        this.oldPassword = oldPassword;
-    }
 
     public String getUsername() {
         return username;

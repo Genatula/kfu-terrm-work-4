@@ -54,5 +54,7 @@
             <br>
             <button type="submit" class="btn btn-primary mt-3">Save</button>
         </form>
+        <br>
+        <a href="<@spring.url '/articles/${article.id}/edit/image'/>">Edit the image</a>
     </div>
 </@document.document>

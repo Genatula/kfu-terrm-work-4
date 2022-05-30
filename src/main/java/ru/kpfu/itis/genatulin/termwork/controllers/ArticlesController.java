@@ -10,6 +10,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 import ru.kpfu.itis.genatulin.termwork.dto.CommentForm;
 import ru.kpfu.itis.genatulin.termwork.dto.CreateArticleForm;
 import ru.kpfu.itis.genatulin.termwork.dto.UpdateArticleForm;
+import ru.kpfu.itis.genatulin.termwork.dto.UpdateImageForm;
 import ru.kpfu.itis.genatulin.termwork.exceptions.ArticleDoesNotExistException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.EmptyFileException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.FileDoesNotExistException;
@@ -148,6 +149,39 @@ public class ArticlesController {
             }
         } catch (ArticleDoesNotExistException e) {
             return "404";
+        }
+    }
+
+    @GetMapping(value = "/{id}/edit/image")
+    public String getUpdateImageForm(@PathVariable String id, ModelMap modelMap) {
+        try {
+            Article article = articleService.getArticle(Long.valueOf(id));
+            UpdateImageForm form = new UpdateImageForm();
+            modelMap.addAttribute("article", article);
+            modelMap.addAttribute("form", form);
+            return "article_edit_image";
+        } catch (ArticleDoesNotExistException e) {
+            return "404";
+        }
+    }
+
+    @PostMapping(value = "/{id}/edit/image")
+    public String updateImage(@Valid @ModelAttribute("form") UpdateImageForm form, BindingResult result, @PathVariable String id, ModelMap modelMap) {
+        Article article = null;
+        try {
+            article = articleService.getArticle(Long.valueOf(id));
+            if (result.hasErrors()) {
+                modelMap.addAttribute("article", article);
+                return "article_edit_image";
+            }
+            articleService.updateImage(form, Long.valueOf(id));
+            return "redirect:/articles/" + id + "/edit";
+        } catch (ArticleDoesNotExistException e) {
+            return "404";
+        } catch (EmptyFileException e) {
+            modelMap.addAttribute("article", article);
+            modelMap.addAttribute("empty_file", true);
+            return "article_edit_image";
         }
     }
 }

@@ -4,6 +4,7 @@ import org.springframework.security.core.Authentication;
 import ru.kpfu.itis.genatulin.termwork.dto.CommentForm;
 import ru.kpfu.itis.genatulin.termwork.dto.CreateArticleForm;
 import ru.kpfu.itis.genatulin.termwork.dto.UpdateArticleForm;
+import ru.kpfu.itis.genatulin.termwork.dto.UpdateImageForm;
 import ru.kpfu.itis.genatulin.termwork.exceptions.ArticleDoesNotExistException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.EmptyFileException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.IncorrectExtensionException;
@@ -19,4 +20,6 @@ public interface ArticleService {
     void createArticle(CreateArticleForm form, String username) throws IncorrectExtensionException, EmptyFileException;
     void updateArticle(UpdateArticleForm form, Long id) throws EmptyFileException;
     void addComment(CommentForm form, Long id) throws ArticleDoesNotExistException;
+
+    void updateImage(UpdateImageForm form, Long id) throws EmptyFileException;
 }

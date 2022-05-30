@@ -61,11 +61,11 @@
                 </form>
                 <div class="dropdown text-end">
                     <a id="dropdownUser1" class="d-block link-dark text-decoration-none dropdown-toggle" href="<@spring.url '/user'/>" data-bs-toggle="dropdown" aria-expanded="false">
-                        Profile
+                        Menu
                     </a>
                     <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1" style="">
                         <li>
-                            <a href="<@spring.url '/user/edit'/>" class="dropdown-item">Edit</a>
+                            <a href="<@spring.url '/user'/>" class="dropdown-item">Profile</a>
                         </li>
                         <li>
                             <a href="<@spring.url '/logout'/>" class="dropdown-item">Logout</a>
