@@ -75,6 +75,7 @@ public class MeetingServiceImpl implements MeetingService {
             meeting.setDescription(form.getDescription());
             meeting.setShortDescription(form.getShortDescription());
             meeting.setImage(storageService.getFileByName(filename));
+            meeting.setParticipants(Set.of(userService.getCurrentUser()));
 
             meetingRepository.save(meeting);
         } catch (FileDoesNotExistException e) {

@@ -10,13 +10,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 import ru.kpfu.itis.genatulin.termwork.dto.CreateSpeeddateForm;
 import ru.kpfu.itis.genatulin.termwork.dto.UpdateImageForm;
 import ru.kpfu.itis.genatulin.termwork.dto.UpdateSpeeddateForm;
-import ru.kpfu.itis.genatulin.termwork.exceptions.EmptyFileException;
-import ru.kpfu.itis.genatulin.termwork.exceptions.IncorrectExtensionException;
-import ru.kpfu.itis.genatulin.termwork.exceptions.SpeeddateDoesNotExistException;
+import ru.kpfu.itis.genatulin.termwork.exceptions.*;
 import ru.kpfu.itis.genatulin.termwork.models.Speeddate;
 import ru.kpfu.itis.genatulin.termwork.services.SpeeddateService;
+import ru.kpfu.itis.genatulin.termwork.services.UserService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -25,10 +25,12 @@ import java.util.List;
 @Slf4j
 public class SpeeddatesController {
     private final SpeeddateService speeddateService;
+    private final UserService userService;
 
     @Autowired
-    public SpeeddatesController(SpeeddateService speeddateService) {
+    public SpeeddatesController(SpeeddateService speeddateService, UserService userService) {
         this.speeddateService = speeddateService;
+        this.userService = userService;
     }
 
     @GetMapping
@@ -43,10 +45,12 @@ public class SpeeddatesController {
     @GetMapping(value ="/{id}")
     public String getSpeeddate(ModelMap modelMap, @PathVariable(value = "id") String id, HttpServletRequest request) {
         try {
+            Boolean isParticipant = speeddateService.getSpeeddate(Long.valueOf(id)).getParticipants().contains(userService.getCurrentUser());
             Speeddate speeddate = speeddateService.getSpeeddate(Long.valueOf(id));
             Boolean isAdmin = request.isUserInRole("ROLE_ADMIN");
             modelMap.addAttribute("is_admin", isAdmin);
             modelMap.addAttribute("speeddate", speeddate);
+            modelMap.addAttribute("is_participant", isParticipant);
             return "speeddate";
         } catch (SpeeddateDoesNotExistException e) {
             log.info("Speed date with id " + id + "was not found");
@@ -151,6 +155,30 @@ public class SpeeddatesController {
             modelMap.addAttribute("speeddate", speeddate);
             modelMap.addAttribute("empty_file", true);
             return "speeddate_edit_image";
+        }
+    }
+
+    @RequestMapping(value = "/participate")
+    public void changeMeetingParticipant(@RequestParam(name = "undo", defaultValue = "false") String undo, @RequestParam String id, HttpServletResponse response) {
+        if (Boolean.parseBoolean(undo)) {
+            try {
+                speeddateService.removeUserFromSpeeddate(Long.parseLong(id));
+                response.setStatus(200);
+            } catch (SpeeddateDoesNotExistException e) {
+                response.setStatus(404);
+            } catch (UserDoesNoxExistException e) {
+                response.setStatus(400);
+            }
+        }
+        else {
+            try {
+                speeddateService.addUserToSpeeddate(Long.parseLong(id));
+                response.setStatus(200);
+            } catch (SpeeddateDoesNotExistException e) {
+                response.setStatus(404);
+            } catch (UserAlreadyInEventException e) {
+                response.setStatus(400);
+            }
         }
     }
 }

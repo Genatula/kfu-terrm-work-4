@@ -26,8 +26,15 @@
         <div class="row">
             <p>${speeddate.description}</p>
         </div>
+        <input type="hidden" id="id" name="id" value="${speeddate.id}">
         <div class="row align-content-center">
-            <button type="button" class="btn btn-primary" id="participate-btn">Take part</button>
+            <#if is_participant>
+                <button type="button" class="btn btn-primary" id="participate-btn" hidden>Take part</button>
+                <button type="button" class="btn btn-danger" id="undo-participate-btn">Leave the meeting</button>
+            <#else >
+                <button type="button" class="btn btn-primary" id="participate-btn">Take part</button>
+                <button type="button" class="btn btn-danger" id="undo-participate-btn" hidden>Leave the meeting</button>
+            </#if>
         </div>
     </div>
 </@document.document>

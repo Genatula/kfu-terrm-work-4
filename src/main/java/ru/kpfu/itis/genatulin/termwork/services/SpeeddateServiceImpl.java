@@ -9,17 +9,18 @@ import ru.kpfu.itis.genatulin.termwork.converters.TimeConverter;
 import ru.kpfu.itis.genatulin.termwork.dto.CreateSpeeddateForm;
 import ru.kpfu.itis.genatulin.termwork.dto.UpdateImageForm;
 import ru.kpfu.itis.genatulin.termwork.dto.UpdateSpeeddateForm;
-import ru.kpfu.itis.genatulin.termwork.exceptions.EmptyFileException;
-import ru.kpfu.itis.genatulin.termwork.exceptions.FileDoesNotExistException;
-import ru.kpfu.itis.genatulin.termwork.exceptions.IncorrectExtensionException;
-import ru.kpfu.itis.genatulin.termwork.exceptions.SpeeddateDoesNotExistException;
+import ru.kpfu.itis.genatulin.termwork.exceptions.*;
+import ru.kpfu.itis.genatulin.termwork.models.Meeting;
 import ru.kpfu.itis.genatulin.termwork.models.Speeddate;
 import ru.kpfu.itis.genatulin.termwork.models.Target;
+import ru.kpfu.itis.genatulin.termwork.models.User;
 import ru.kpfu.itis.genatulin.termwork.repositories.SpeeddateRepository;
 
 import java.sql.Time;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class SpeeddateServiceImpl implements SpeeddateService {
@@ -28,14 +29,16 @@ public class SpeeddateServiceImpl implements SpeeddateService {
     private final StorageService storageService;
     private final TimeConverter timeConverter;
     private final TargetConverter targetConverter;
+    private final UserService userService;
 
     @Autowired
-    public SpeeddateServiceImpl(SpeeddateRepository speeddateRepository, TargetService targetService, StorageService storageService, TimeConverter timeConverter, TargetConverter targetConverter) {
+    public SpeeddateServiceImpl(SpeeddateRepository speeddateRepository, TargetService targetService, StorageService storageService, TimeConverter timeConverter, TargetConverter targetConverter, UserService userService) {
         this.speeddateRepository = speeddateRepository;
         this.targetService = targetService;
         this.storageService = storageService;
         this.timeConverter = timeConverter;
         this.targetConverter = targetConverter;
+        this.userService = userService;
     }
 
     @Override
@@ -82,6 +85,7 @@ public class SpeeddateServiceImpl implements SpeeddateService {
             speeddate.setShortDescription(form.getShortDescription());
             speeddate.setTarget(target);
             speeddate.setImage(storageService.getFileByName(filename));
+            speeddate.setParticipants(Set.of(userService.getCurrentUser()));
             speeddateRepository.save(speeddate);
         } catch (FileDoesNotExistException e) {
             throw new IllegalStateException();
@@ -110,5 +114,35 @@ public class SpeeddateServiceImpl implements SpeeddateService {
         MultipartFile file = form.getFile();
 
         storageService.updateImage(file, speeddate.getImage().getFilename());
+    }
+
+    @Override
+    public void removeUserFromSpeeddate(long id) throws SpeeddateDoesNotExistException, UserDoesNoxExistException {
+        User user = userService.getCurrentUser();
+        if (!checkIfExistsById(id)) {
+            throw new SpeeddateDoesNotExistException();
+        }
+        Speeddate speeddate = speeddateRepository.getById(id);
+        Set<User> participants = speeddate.getParticipants();
+        if (!participants.contains(user)) {
+            throw new UserDoesNoxExistException();
+        }
+        participants.remove(user);
+        speeddateRepository.save(speeddate);
+    }
+
+    @Override
+    public void addUserToSpeeddate(long id) throws SpeeddateDoesNotExistException, UserAlreadyInEventException {
+        User user = userService.getCurrentUser();
+        if (!checkIfExistsById(id)) {
+            throw new SpeeddateDoesNotExistException();
+        }
+        Speeddate speeddate = speeddateRepository.getById(id);
+        Set<User> participants = speeddate.getParticipants();
+        if (participants.contains(user)) {
+            throw new UserAlreadyInEventException();
+        }
+        participants.add(user);
+        speeddateRepository.save(speeddate);
     }
 }
