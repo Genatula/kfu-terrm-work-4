@@ -41,7 +41,7 @@ public class MeetingsController {
     }
 
     @GetMapping(value ="/{id}")
-    public String getMeeting(ModelMap modelMap, @PathVariable(value = "id") String id, HttpServletRequest request) {
+    public String getMeeting(ModelMap modelMap, @PathVariable(value = "id") String id, HttpServletRequest request, RedirectAttributesModelMap redirectAttributesModelMap) {
         try {
             Meeting meeting = meetingService.getMeeting(Long.valueOf(id));
             Boolean isParticipant = meeting.getParticipants().contains(userService.getCurrentUser());
@@ -51,6 +51,7 @@ public class MeetingsController {
             modelMap.addAttribute("is_participant", isParticipant);
             return "meeting";
         } catch (MeetingDoesNotExistException e) {
+            redirectAttributesModelMap.addAttribute("code", 404);
             return "404";
         }
     }
@@ -58,7 +59,7 @@ public class MeetingsController {
     @GetMapping(value = "/create")
     public String getCreateForm(ModelMap modelMap) {
         modelMap.addAttribute("form", new CreateMeetingForm());
-        return "meeting_create";
+        return "redirect:/error";
     }
 
     @PostMapping(value = "/create")

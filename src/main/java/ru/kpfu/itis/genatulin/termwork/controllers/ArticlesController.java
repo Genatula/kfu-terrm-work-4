@@ -21,6 +21,7 @@ import ru.kpfu.itis.genatulin.termwork.services.StorageService;
 import ru.kpfu.itis.genatulin.termwork.services.TagService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
@@ -110,7 +111,7 @@ public class ArticlesController {
             return "article_create";
         }
         redirectAttributesModelMap.addAttribute("created", true);
-        return "redirect:/articles";
+        return "404";
     }
 
     @GetMapping(value = "/{id}/edit")

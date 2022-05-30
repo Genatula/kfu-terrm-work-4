@@ -52,10 +52,8 @@ public class SignUpController {
         } catch (UserWithEmailAlreadyExistsException e) {
             modelMap.addAttribute("email_error", true);
             return "register";
-        } catch (FileDoesNotExistException e) {
-            return "500";
-        } catch (IOException e) {
-            return "500";
+        } catch (FileDoesNotExistException | IOException e) {
+            return "error";
         }
     }
 }
