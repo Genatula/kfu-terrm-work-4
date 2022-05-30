@@ -13,4 +13,5 @@ public interface UserService {
     boolean checkIfExistsByEmail(String email);
     void updateUser(UpdateForm form, String username) throws UserWithUsernameAlreadyExistsException, UserWithEmailAlreadyExistsException;
     User getUserByUsername(String username) throws UserDoesNoxExistException;
+    User getCurrentUser();
 }

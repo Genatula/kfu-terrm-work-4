@@ -3,10 +3,12 @@ package ru.kpfu.itis.genatulin.termwork.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import ru.kpfu.itis.genatulin.termwork.dto.CommentForm;
 import ru.kpfu.itis.genatulin.termwork.dto.CreateArticleForm;
 import ru.kpfu.itis.genatulin.termwork.dto.UpdateArticleForm;
 import ru.kpfu.itis.genatulin.termwork.exceptions.*;
 import ru.kpfu.itis.genatulin.termwork.models.Article;
+import ru.kpfu.itis.genatulin.termwork.models.Comment;
 import ru.kpfu.itis.genatulin.termwork.models.Tag;
 import ru.kpfu.itis.genatulin.termwork.repositories.ArticleRepository;
 
@@ -87,6 +89,20 @@ public class ArticleServiceImpl implements ArticleService {
         article.setCaption(form.getCaption());
         article.setBody(form.getBody());
         article.setShortDescription(form.getShortDescription());
+
+        articleRepository.save(article);
+    }
+
+    @Override
+    public void addComment(CommentForm form, Long id) throws ArticleDoesNotExistException {
+        Article article = getArticle(id);
+        Comment comment = new Comment();
+
+        comment.setArticle(article);
+        comment.setBody(form.getBody());
+        comment.setAuthor(userService.getCurrentUser());
+        comment.setDate(new java.sql.Date(new Date().getTime()));
+        article.getComments().add(comment);
 
         articleRepository.save(article);
     }

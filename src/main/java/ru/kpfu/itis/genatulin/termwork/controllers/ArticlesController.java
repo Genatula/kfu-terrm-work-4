@@ -7,6 +7,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
+import ru.kpfu.itis.genatulin.termwork.dto.CommentForm;
 import ru.kpfu.itis.genatulin.termwork.dto.CreateArticleForm;
 import ru.kpfu.itis.genatulin.termwork.dto.UpdateArticleForm;
 import ru.kpfu.itis.genatulin.termwork.exceptions.ArticleDoesNotExistException;
@@ -14,6 +15,7 @@ import ru.kpfu.itis.genatulin.termwork.exceptions.EmptyFileException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.FileDoesNotExistException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.IncorrectExtensionException;
 import ru.kpfu.itis.genatulin.termwork.models.Article;
+import ru.kpfu.itis.genatulin.termwork.models.User;
 import ru.kpfu.itis.genatulin.termwork.services.ArticleService;
 import ru.kpfu.itis.genatulin.termwork.services.StorageService;
 import ru.kpfu.itis.genatulin.termwork.services.TagService;
@@ -50,8 +52,32 @@ public class ArticlesController {
     public String getArticle(@PathVariable String id, ModelMap modelMap) {
         try {
             Article article = articleService.getArticle(Long.valueOf(id));
+            User author = article.getAuthor();
             modelMap.addAttribute("article", article);
+            modelMap.addAttribute("author", author);
+            modelMap.addAttribute("form", new CommentForm());
+            modelMap.addAttribute("comments", article.getComments());
             return "article";
+        } catch (ArticleDoesNotExistException e) {
+            return "404";
+        }
+    }
+
+    @PostMapping(value = "/{id}")
+    public String addComment(@Valid @ModelAttribute("form") CommentForm form, BindingResult result, ModelMap modelMap, @PathVariable String id) {
+        try {
+            Article article = articleService.getArticle(Long.valueOf(id));
+            User author = article.getAuthor();
+            modelMap.addAttribute("article", article);
+            modelMap.addAttribute("author", author);
+            modelMap.addAttribute("comments", article.getComments());
+
+            if (result.hasErrors()) {
+                return "article";
+            }
+
+            articleService.addComment(form, Long.valueOf(id));
+            return "redirect:/articles/" + id;
         } catch (ArticleDoesNotExistException e) {
             return "404";
         }

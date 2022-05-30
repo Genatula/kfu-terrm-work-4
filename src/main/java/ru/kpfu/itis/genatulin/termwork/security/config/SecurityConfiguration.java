@@ -37,9 +37,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                           .mvcMatchers("/resources/**", "/", "/about", "/login", "/register", "/forgot").permitAll()
                           .mvcMatchers("/user", "/user/edit", "/feed", "/articles", "/meetings", "/speeddates").authenticated()
                           .mvcMatchers("/speeddates/*/edit","/meetings/*/edit", "/articles/*/edit", "/*/create").hasRole("ADMIN")
-                          .mvcMatchers("/articles/{id}").access("@articleServiceImpl.checkArticleId(#id, authentication)")
+                          .mvcMatchers("/articles/*", "/meetings/*", "/speeddates/*").authenticated()
+                          /*.mvcMatchers("/articles/{id}").access("@articleServiceImpl.checkArticleId(#id, authentication)")
                           .mvcMatchers("/meetings/{id}").access("@meetingServiceImpl.checkMeetingId(#id, authentication)")
-                          .mvcMatchers("/speeddates/{id}").access("@speeddateServiceImpl.checkSpeeddateId(#id, authentication)")
+                          .mvcMatchers("/speeddates/{id}").access("@speeddateServiceImpl.checkSpeeddateId(#id, authentication)")*/
                           .anyRequest().denyAll()
                 .and()
                 .formLogin(form -> form

@@ -87,4 +87,9 @@ public class UserServiceImpl implements UserService {
         }
         return userRepository.getUserByUsername(username);
     }
+
+    @Override
+    public User getCurrentUser() {
+        return userRepository.getCurrentUser();
+    }
 }
