@@ -5,15 +5,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.kpfu.itis.genatulin.termwork.dto.SignUpForm;
 import ru.kpfu.itis.genatulin.termwork.dto.UpdateForm;
+import ru.kpfu.itis.genatulin.termwork.dto.UpdateImageForm;
 import ru.kpfu.itis.genatulin.termwork.dto.UpdatePasswordForm;
-import ru.kpfu.itis.genatulin.termwork.exceptions.IncorrectPasswordException;
-import ru.kpfu.itis.genatulin.termwork.exceptions.UserDoesNoxExistException;
-import ru.kpfu.itis.genatulin.termwork.exceptions.UserWithEmailAlreadyExistsException;
-import ru.kpfu.itis.genatulin.termwork.exceptions.UserWithUsernameAlreadyExistsException;
+import ru.kpfu.itis.genatulin.termwork.exceptions.*;
 import ru.kpfu.itis.genatulin.termwork.models.Authority;
 import ru.kpfu.itis.genatulin.termwork.models.User;
 import ru.kpfu.itis.genatulin.termwork.repositories.UserRepository;
 
+import java.io.IOException;
 import java.util.Set;
 
 @Service
@@ -30,7 +29,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void createUser(SignUpForm form) throws UserWithUsernameAlreadyExistsException, UserWithEmailAlreadyExistsException {
+    public void createUser(SignUpForm form) throws UserWithUsernameAlreadyExistsException, UserWithEmailAlreadyExistsException, IOException, FileDoesNotExistException {
         if (checkIfExistsByUsername(form.getUsername())) {
             throw new UserWithUsernameAlreadyExistsException();
         }
@@ -39,6 +38,7 @@ public class UserServiceImpl implements UserService {
         }
         Authority authority = new Authority();
         authority.setAuthority("ROLE_ADMIN");
+        String filename = storageService.uploadDefaultUserImage();
         User user = User.builder()
                 .email(form.getEmail())
                 .firstname(form.getFirstname())
@@ -46,6 +46,7 @@ public class UserServiceImpl implements UserService {
                 .enabled(true)
                 .username(form.getUsername())
                 .authorities(Set.of(authority))
+                .profileImage(storageService.getFileByName(filename))
                 .build();
         authority.setUser(user);
         userRepository.save(user);
@@ -97,5 +98,10 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.getCurrentUser();
         user.setPassword(passwordEncoder.encode(form.getPassword()));
         userRepository.save(user);
+    }
+
+    @Override
+    public void updateImage(UpdateImageForm form) throws EmptyFileException {
+        storageService.updateImage(form.getFile(), getCurrentUser().getProfileImage().getFilename());
     }
 }

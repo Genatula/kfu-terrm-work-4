@@ -9,11 +9,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.kpfu.itis.genatulin.termwork.dto.SignUpForm;
+import ru.kpfu.itis.genatulin.termwork.exceptions.FileDoesNotExistException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.UserWithEmailAlreadyExistsException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.UserWithUsernameAlreadyExistsException;
 import ru.kpfu.itis.genatulin.termwork.services.UserService;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @Controller
 @RequestMapping(value = "/register")
@@ -46,6 +48,10 @@ public class SignUpController {
         } catch (UserWithEmailAlreadyExistsException e) {
             modelMap.addAttribute("email_error", true);
             return "register";
+        } catch (FileDoesNotExistException e) {
+            return "500";
+        } catch (IOException e) {
+            return "500";
         }
     }
 }

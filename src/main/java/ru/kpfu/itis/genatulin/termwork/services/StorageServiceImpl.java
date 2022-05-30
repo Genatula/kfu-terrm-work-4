@@ -13,6 +13,9 @@ import ru.kpfu.itis.genatulin.termwork.models.User;
 import ru.kpfu.itis.genatulin.termwork.repositories.FileDetailsRepository;
 import ru.kpfu.itis.genatulin.termwork.repositories.UserRepository;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,6 +31,8 @@ public class StorageServiceImpl implements StorageService {
 
     @Value("${storage.images.path}")
     private String storagePath;
+    @Value("${storage.images.default.path}")
+    private String defaultImagePath;
 
     @Autowired
     public StorageServiceImpl(FileDetailsRepository fileDetailsRepository, UserRepository userRepository) {
@@ -112,15 +117,21 @@ public class StorageServiceImpl implements StorageService {
 
     @Transactional
     @Override
-    public FileDetails getDefaultUserImage() {
+    public String uploadDefaultUserImage() throws IOException {
+        String filename = UUID.randomUUID().toString();
+        String extension = defaultImagePath.substring(defaultImagePath.lastIndexOf('.'));
+        File file = Paths.get(defaultImagePath).toFile();
+
+        Files.copy(new FileInputStream(file), Paths.get(storagePath, filename + extension));
+
         FileDetails fileDetails = FileDetails.builder()
-                .extension("jpg")
-                .size(100L)
-                .filename("default")
-                .contentType("image/jpeg")
+                .contentType("img/jpeg")
+                .size(Files.size(Paths.get(defaultImagePath)))
+                .extension(extension)
+                .filename(filename)
                 .build();
         fileDetailsRepository.save(fileDetails);
-        return fileDetails;
+        return filename;
     }
 
     @Override

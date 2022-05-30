@@ -3,7 +3,7 @@
 <#import '/spring.ftl' as spring>
 <@document.document 'user' 'Profile'>
     <main class="profile">
-        <img src="<@spring.url "/images/default.jpg"/>" class="rounded mb-1" width="200" height="200" alt="Profile pic">
+        <img src="<@spring.url "/images/${filename}"/>" class="rounded mb-1" width="200" height="200" alt="Profile pic">
         <h2>${user.username}</h2>
         <div class="d-grid gap-2">
             <a role="button" class="btn btn-primary mb-2" href="<@spring.url '/user/events'/>">Upcoming events</a>

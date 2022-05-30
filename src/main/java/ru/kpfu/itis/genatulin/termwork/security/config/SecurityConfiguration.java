@@ -35,7 +35,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                           .mvcMatchers("/resources/**", "/", "/about", "/login", "/register", "/forgot").permitAll()
-                          .mvcMatchers("/user", "/user/edit", "/user/edit/password","/feed", "/articles", "/meetings", "/speeddates").authenticated()
+                          .mvcMatchers("/user", "/user/edit", "/user/edit/*","/feed", "/articles", "/meetings", "/speeddates").authenticated()
                           .mvcMatchers("/speeddates/*/edit/*","/meetings/*/edit/*", "/articles/*/edit/*", "/*/create", "/speeddates/*/edit", "/meetings/*/edit", "/articles/*/edit").hasRole("ADMIN")
                           .mvcMatchers("/articles/*", "/meetings/*", "/speeddates/*").authenticated()
                           /*.mvcMatchers("/articles/{id}").access("@articleServiceImpl.checkArticleId(#id, authentication)")

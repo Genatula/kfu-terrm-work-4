@@ -10,11 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 import ru.kpfu.itis.genatulin.termwork.dto.UpdateForm;
+import ru.kpfu.itis.genatulin.termwork.dto.UpdateImageForm;
 import ru.kpfu.itis.genatulin.termwork.dto.UpdatePasswordForm;
-import ru.kpfu.itis.genatulin.termwork.exceptions.IncorrectPasswordException;
-import ru.kpfu.itis.genatulin.termwork.exceptions.UserDoesNoxExistException;
-import ru.kpfu.itis.genatulin.termwork.exceptions.UserWithEmailAlreadyExistsException;
-import ru.kpfu.itis.genatulin.termwork.exceptions.UserWithUsernameAlreadyExistsException;
+import ru.kpfu.itis.genatulin.termwork.exceptions.*;
 import ru.kpfu.itis.genatulin.termwork.models.User;
 import ru.kpfu.itis.genatulin.termwork.security.details.UserDetailsImpl;
 import ru.kpfu.itis.genatulin.termwork.services.UserService;
@@ -36,6 +34,7 @@ public class UserController {
     public String getUserPage(ModelMap modelMap) {
         User user = userService.getCurrentUser();
         modelMap.addAttribute("user", user);
+        modelMap.addAttribute("filename", user.getProfileImage().getFilename() + user.getProfileImage().getExtension());
         return "user";
     }
 
@@ -87,6 +86,27 @@ public class UserController {
         } catch (IncorrectPasswordException e) {
             modelMap.addAttribute("old_password_error", true);
             return "user_password";
+        }
+    }
+
+    @GetMapping(value = "/edit/image")
+    public String getEditPhotoForm(ModelMap modelMap) {
+        UpdateImageForm form = new UpdateImageForm();
+        modelMap.addAttribute("form", form);
+        return "user_edit_image";
+    }
+
+    @PostMapping(value = "/edit/image")
+    public String updatePhoto(@Valid @ModelAttribute("form") UpdateImageForm form, BindingResult result, ModelMap modelMap) {
+        if (result.hasErrors()) {
+            return "user_edit_image";
+        }
+        try {
+            userService.updateImage(form);
+            return "redirect:/user";
+        } catch (EmptyFileException e) {
+            modelMap.addAttribute("empty_file", true);
+            return "user_edit_image";
         }
     }
 }

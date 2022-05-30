@@ -6,6 +6,8 @@ import ru.kpfu.itis.genatulin.termwork.exceptions.FileDoesNotExistException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.IncorrectExtensionException;
 import ru.kpfu.itis.genatulin.termwork.models.FileDetails;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Path;
 
 public interface StorageService {
@@ -15,6 +17,6 @@ public interface StorageService {
     void uploadImage(MultipartFile file, String filename) throws IncorrectExtensionException, EmptyFileException;
     FileDetails getFileByName(String filename) throws FileDoesNotExistException;
     boolean checkIfExistsByFilename(String filename);
-    FileDetails getDefaultUserImage();
+    String uploadDefaultUserImage() throws IOException;
     Path getPathByFilename(String filename) throws FileDoesNotExistException;
 }

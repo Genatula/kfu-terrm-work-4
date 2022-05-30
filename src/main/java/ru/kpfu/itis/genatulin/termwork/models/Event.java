@@ -25,20 +25,6 @@ public abstract class Event extends AbstractFeedPost {
     @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    @ManyToMany
-    @JoinTable(name = "event_participants",
-            joinColumns = @JoinColumn(name = "event_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private Set<User> participants = new LinkedHashSet<>();
-
-    public Set<User> getParticipants() {
-        return participants;
-    }
-
-    public void setParticipants(Set<User> participants) {
-        this.participants = participants;
-    }
-
     public String getDescription() {
         return description;
     }
