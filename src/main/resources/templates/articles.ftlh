@@ -3,6 +3,13 @@
 <#import '/spring.ftl' as spring>
 <@document.document 'articles' 'Articles'>
     <@document.header 'articles'/>
+    <#if is_admin>
+        <div class="row">
+            <div class="col-4"></div>
+            <a role="button" class="btn btn-primary col-4" href="<@spring.url '/articles/create'/>">Create article</a>
+            <div class="col-4"></div>
+        </div>
+    </#if>
     <div class="container">
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
             <#list articles as article>

@@ -5,8 +5,14 @@
     <@document.header 'articles'/>
     <div class="container">
         <div class="row justify-content-center">
-            <h1 class="col-10">${article.caption}</h1>
-            <span class="text-muted col-2 text-center pt-2">${article.creationDate?string}</span>
+            <#if is_admin>
+                <h1 class="col-8">${article.caption}</h1>
+                <a role="button" class="btn btn-primary col-2" href="<@spring.url '/articles/${article.id}/edit'/>">Edit article</a>
+                <span class="text-muted col-2 text-center pt-2">Created ${article.creationDate?string}</span>
+            <#else >
+                <h1 class="col-10">${article.caption}</h1>
+                <span class="text-muted col-2 text-center pt-2">Created ${article.creationDate?string}</span>
+            </#if>
         </div>
         <div class="row">
             <h2 class="text-muted">Author : ${author.firstname}</h2>

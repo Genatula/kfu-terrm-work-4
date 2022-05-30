@@ -3,6 +3,13 @@
 <#import '/spring.ftl' as spring>
 <@document.document 'speeddates' 'Speed Dates'>
     <@document.header 'speeddates'/>
+    <#if is_admin>
+        <div class="row">
+            <div class="col-4"></div>
+            <a role="button" class="btn btn-primary col-4" href="<@spring.url '/speeddates/create'/>">Create speed date</a>
+            <div class="col-4"></div>
+        </div>
+    </#if>
     <div class="container">
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
             <#list speeddates as speeddate>

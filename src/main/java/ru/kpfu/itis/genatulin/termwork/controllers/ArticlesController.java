@@ -1,7 +1,7 @@
 package ru.kpfu.itis.genatulin.termwork.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -13,7 +13,6 @@ import ru.kpfu.itis.genatulin.termwork.dto.UpdateArticleForm;
 import ru.kpfu.itis.genatulin.termwork.dto.UpdateImageForm;
 import ru.kpfu.itis.genatulin.termwork.exceptions.ArticleDoesNotExistException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.EmptyFileException;
-import ru.kpfu.itis.genatulin.termwork.exceptions.FileDoesNotExistException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.IncorrectExtensionException;
 import ru.kpfu.itis.genatulin.termwork.models.Article;
 import ru.kpfu.itis.genatulin.termwork.models.User;
@@ -21,9 +20,8 @@ import ru.kpfu.itis.genatulin.termwork.services.ArticleService;
 import ru.kpfu.itis.genatulin.termwork.services.StorageService;
 import ru.kpfu.itis.genatulin.termwork.services.TagService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.security.Principal;
 import java.util.List;
 
@@ -43,21 +41,25 @@ public class ArticlesController {
     }
 
     @GetMapping
-    public String getAllArticles(ModelMap modelMap, @RequestParam(value = "page", defaultValue = "0") String page) {
+    public String getAllArticles(ModelMap modelMap, @RequestParam(value = "page", defaultValue = "0") String page, HttpServletRequest request) {
         List<Article> articleList = articleService.getArticles();
+        Boolean isAdmin = request.isUserInRole("ROLE_ADMIN");
         modelMap.addAttribute("articles", articleList);
+        modelMap.addAttribute("is_admin", isAdmin);
         return "articles";
     }
 
     @GetMapping(value = "/{id}")
-    public String getArticle(@PathVariable String id, ModelMap modelMap) {
+    public String getArticle(@PathVariable String id, ModelMap modelMap, Authentication authentication, HttpServletRequest request) {
         try {
+            Boolean isAdmin = request.isUserInRole("ROLE_ADMIN");
             Article article = articleService.getArticle(Long.valueOf(id));
             User author = article.getAuthor();
             modelMap.addAttribute("article", article);
             modelMap.addAttribute("author", author);
             modelMap.addAttribute("form", new CommentForm());
             modelMap.addAttribute("comments", article.getComments());
+            modelMap.addAttribute("is_admin", isAdmin);
             return "article";
         } catch (ArticleDoesNotExistException e) {
             return "404";
@@ -65,13 +67,15 @@ public class ArticlesController {
     }
 
     @PostMapping(value = "/{id}")
-    public String addComment(@Valid @ModelAttribute("form") CommentForm form, BindingResult result, ModelMap modelMap, @PathVariable String id) {
+    public String addComment(@Valid @ModelAttribute("form") CommentForm form, BindingResult result, ModelMap modelMap, @PathVariable String id, HttpServletRequest request) {
         try {
+            Boolean isAdmin = request.isUserInRole("ROLE_ADMIN");
             Article article = articleService.getArticle(Long.valueOf(id));
             User author = article.getAuthor();
             modelMap.addAttribute("article", article);
             modelMap.addAttribute("author", author);
             modelMap.addAttribute("comments", article.getComments());
+            modelMap.addAttribute("is_admin", isAdmin);
 
             if (result.hasErrors()) {
                 return "article";

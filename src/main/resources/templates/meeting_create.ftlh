@@ -1,7 +1,7 @@
 <#ftl encoding='utf-8'>
 <#import '_document.ftlh' as document>
 <#import '/spring.ftl' as spring>
-<@document.document 'meeting' 'New Meeting'>
+<@document.document 'meetings' 'New Meeting'>
     <@document.header 'meetings'/>
     <div class="col-12 m-3 meeting-form">
         <h1>Create new meeting</h1>

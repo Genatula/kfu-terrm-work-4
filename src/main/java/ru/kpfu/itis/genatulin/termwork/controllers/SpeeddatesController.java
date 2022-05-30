@@ -15,6 +15,7 @@ import ru.kpfu.itis.genatulin.termwork.exceptions.SpeeddateDoesNotExistException
 import ru.kpfu.itis.genatulin.termwork.models.Speeddate;
 import ru.kpfu.itis.genatulin.termwork.services.SpeeddateService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -29,16 +30,20 @@ public class SpeeddatesController {
     }
 
     @GetMapping
-    public String getSpeeddates(ModelMap modelMap) {
+    public String getSpeeddates(ModelMap modelMap, HttpServletRequest request) {
         List<Speeddate> speeddates = speeddateService.getSpeeddates();
+        Boolean isAdmin = request.isUserInRole("ROLE_ADMIN");
         modelMap.addAttribute("speeddates", speeddates);
+        modelMap.addAttribute("is_admin", isAdmin);
         return "speeddates";
     }
 
     @GetMapping(value ="/{id}")
-    public String getSpeeddate(ModelMap modelMap, @PathVariable(value = "id") String id) {
+    public String getSpeeddate(ModelMap modelMap, @PathVariable(value = "id") String id, HttpServletRequest request) {
         try {
             Speeddate speeddate = speeddateService.getSpeeddate(Long.valueOf(id));
+            Boolean isAdmin = request.isUserInRole("ROLE_ADMIN");
+            modelMap.addAttribute("is_admin", isAdmin);
             modelMap.addAttribute("speeddate", speeddate);
             return "speeddate";
         } catch (SpeeddateDoesNotExistException e) {

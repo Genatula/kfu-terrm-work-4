@@ -4,8 +4,8 @@
 <@document.document 'meeting' 'Edit Meeting'>
     <@document.header 'meetings'/>
     <div class="col-12 m-3 meeting-form">
-        <h1>Create new meeting</h1>
-        <form action="<@spring.url '/meetings/${meeting.id}/create'/>" method="post" enctype="multipart/form-data">
+        <h1>Edit meeting</h1>
+        <form action="<@spring.url '/meetings/${meeting.id}/edit'/>" method="post" enctype="multipart/form-data">
             <div class="form-floating mb-3">
                 <@spring.bind 'form.name'/>
                 <#if spring.status.error>

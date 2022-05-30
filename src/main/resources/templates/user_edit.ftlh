@@ -47,6 +47,11 @@
             </div>
             <button type="submit" class="btn btn-primary">Save</button>
         </form>
-        <a href="<@spring.url '/user/edit/password'/>">Update password</a>
+        <div class="row mt-3">
+            <a href="<@spring.url '/user/edit/password'/>">Update password</a>
+        </div>
+        <div class="row mt-3">
+            <a href="<@spring.url '/user/edit/image'/>" class="mt-3">Update image</a>
+        </div>
     </div>
 </@document.document>

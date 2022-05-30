@@ -14,6 +14,7 @@ import ru.kpfu.itis.genatulin.termwork.models.Meeting;
 import ru.kpfu.itis.genatulin.termwork.services.MeetingService;
 import ru.kpfu.itis.genatulin.termwork.services.UserService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
@@ -31,18 +32,22 @@ public class MeetingsController {
     }
 
     @GetMapping
-    public String getMeetings(ModelMap modelMap) {
+    public String getMeetings(ModelMap modelMap, HttpServletRequest request) {
         List<Meeting> meetings = meetingService.getMeetings();
+        Boolean isAdmin = request.isUserInRole("ROLE_ADMIN");
         modelMap.addAttribute("meetings", meetings);
+        modelMap.addAttribute("is_admin", isAdmin);
         return "meetings";
     }
 
     @GetMapping(value ="/{id}")
-    public String getMeeting(ModelMap modelMap, @PathVariable(value = "id") String id) {
+    public String getMeeting(ModelMap modelMap, @PathVariable(value = "id") String id, HttpServletRequest request) {
         try {
             Meeting meeting = meetingService.getMeeting(Long.valueOf(id));
             Boolean isParticipant = meeting.getParticipants().contains(userService.getCurrentUser());
+            Boolean isAdmin = request.isUserInRole("ROLE_ADMIN");
             modelMap.addAttribute("meeting", meeting);
+            modelMap.addAttribute("is_admin", isAdmin);
             modelMap.addAttribute("is_participant", isParticipant);
             return "meeting";
         } catch (MeetingDoesNotExistException e) {
