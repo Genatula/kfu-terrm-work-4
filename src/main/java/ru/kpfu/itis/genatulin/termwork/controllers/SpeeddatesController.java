@@ -1,5 +1,6 @@
 package ru.kpfu.itis.genatulin.termwork.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping(value = "/speeddates")
+@Slf4j
 public class SpeeddatesController {
     private final SpeeddateService speeddateService;
 
@@ -47,6 +49,7 @@ public class SpeeddatesController {
             modelMap.addAttribute("speeddate", speeddate);
             return "speeddate";
         } catch (SpeeddateDoesNotExistException e) {
+            log.info("Speed date with id " + id + "was not found");
             return "404";
         }
     }
@@ -65,9 +68,11 @@ public class SpeeddatesController {
         try {
             speeddateService.createSpeeddate(form);
         } catch (EmptyFileException e) {
+            log.info("Empty file");
             modelMap.addAttribute("empty_file", true);
             return "speeddate_create";
         } catch (IncorrectExtensionException e) {
+            log.info("Incorrect file extension :" + form.getFile().getOriginalFilename());
             modelMap.addAttribute("incorrect_extension", true);
             return "speeddate_create";
         }
@@ -92,6 +97,7 @@ public class SpeeddatesController {
             modelMap.addAttribute("form", form);
             return "speeddate_edit";
         } catch (SpeeddateDoesNotExistException e) {
+            log.info("Speed date with id " + id + "was not found");
             return "404";
         }
     }
@@ -104,6 +110,7 @@ public class SpeeddatesController {
                 modelMap.addAttribute("speeddate", speeddate);
                 return "speeddate_edit";
             } catch (SpeeddateDoesNotExistException e) {
+                log.info("Speed date with id " + id + "was not found");
                 return "404";
             }
         }
@@ -137,8 +144,10 @@ public class SpeeddatesController {
             speeddateService.updateImage(form, Long.valueOf(id));
             return "redirect:/speeddates/" + id + "/edit";
         } catch (SpeeddateDoesNotExistException e) {
+            log.info("Speed date with id " + id + "was not found");
             return "404";
         } catch (EmptyFileException e) {
+            log.info("Empty file");
             modelMap.addAttribute("speeddate", speeddate);
             modelMap.addAttribute("empty_file", true);
             return "speeddate_edit_image";

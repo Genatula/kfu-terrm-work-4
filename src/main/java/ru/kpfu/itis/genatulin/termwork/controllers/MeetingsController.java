@@ -1,5 +1,6 @@
 package ru.kpfu.itis.genatulin.termwork.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping(value = "/meetings")
+@Slf4j
 public class MeetingsController {
     private final MeetingService meetingService;
     private final UserService userService;
@@ -51,6 +53,7 @@ public class MeetingsController {
             modelMap.addAttribute("is_participant", isParticipant);
             return "meeting";
         } catch (MeetingDoesNotExistException e) {
+            log.info("Meeting with id " + id + "was not found");
             redirectAttributesModelMap.addAttribute("code", 404);
             return "404";
         }
@@ -59,7 +62,7 @@ public class MeetingsController {
     @GetMapping(value = "/create")
     public String getCreateForm(ModelMap modelMap) {
         modelMap.addAttribute("form", new CreateMeetingForm());
-        return "redirect:/error";
+        return "meeting_create";
     }
 
     @PostMapping(value = "/create")
@@ -70,9 +73,11 @@ public class MeetingsController {
         try {
             meetingService.createMeeting(form);
         } catch (EmptyFileException e) {
+            log.info("Empty file");
             modelMap.addAttribute("empty_file", true);
             return "meeting_create";
         } catch (IncorrectExtensionException e) {
+            log.info("Incorrect file extension :" + form.getFile().getOriginalFilename());
             modelMap.addAttribute("incorrect_extension", true);
             return "meeting_create";
         }
@@ -96,6 +101,7 @@ public class MeetingsController {
             modelMap.addAttribute("form", form);
             return "meeting_edit";
         } catch (MeetingDoesNotExistException e) {
+            log.info("Meeting with id " + id + "was not found");
             return "404";
         }
     }
@@ -107,6 +113,7 @@ public class MeetingsController {
                 modelMap.addAttribute("meeting", meeting);
                 return "meeting_edit";
             } catch (MeetingDoesNotExistException e) {
+                log.info("Meeting with id " + id + "was not found");
                 return "404";
             }
         }
@@ -124,6 +131,7 @@ public class MeetingsController {
             modelMap.addAttribute("form", form);
             return "meeting_edit_image";
         } catch (MeetingDoesNotExistException e) {
+            log.info("Meeting with id " + id + "was not found");
             return "404";
         }
     }
@@ -140,8 +148,10 @@ public class MeetingsController {
             meetingService.updateImage(form, Long.valueOf(id));
             return "redirect:/meetings/" + id + "/edit";
         } catch (MeetingDoesNotExistException e) {
+            log.info("Meeting with id " + id + "was not found");
             return "404";
         } catch (EmptyFileException e) {
+            log.info("Empty file");
             modelMap.addAttribute("meeting", meeting);
             modelMap.addAttribute("empty_file", true);
             return "meeting_edit_image";

@@ -1,5 +1,6 @@
 package ru.kpfu.itis.genatulin.termwork.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,7 @@ import java.io.IOException;
 
 @Controller
 @RequestMapping(value = "/register")
+@Slf4j
 public class SignUpController {
     private final UserService userService;
 
@@ -47,12 +49,18 @@ public class SignUpController {
             userService.createUser(form);
             return "redirect:/feed";
         } catch (UserWithUsernameAlreadyExistsException e) {
+            log.info("User already exists");
             modelMap.addAttribute("username_error", true);
             return "register";
         } catch (UserWithEmailAlreadyExistsException e) {
+            log.info("User already exists");
             modelMap.addAttribute("email_error", true);
             return "register";
-        } catch (FileDoesNotExistException | IOException e) {
+        } catch (FileDoesNotExistException e) {
+            log.error("Just uploaded file cannot be found");
+            return "error";
+        } catch (IOException e) {
+            log.error("File cannot be written / read");
             return "error";
         }
     }

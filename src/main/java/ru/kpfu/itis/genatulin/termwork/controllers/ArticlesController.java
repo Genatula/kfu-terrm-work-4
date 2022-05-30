@@ -1,5 +1,6 @@
 package ru.kpfu.itis.genatulin.termwork.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -29,6 +30,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping(value = "/articles")
+@Slf4j
 public class ArticlesController {
     private final ArticleService articleService;
     private final TagService tagService;
@@ -63,6 +65,7 @@ public class ArticlesController {
             modelMap.addAttribute("is_admin", isAdmin);
             return "article";
         } catch (ArticleDoesNotExistException e) {
+            log.info("Article with id " + id + "was not found");
             return "404";
         }
     }
@@ -85,6 +88,7 @@ public class ArticlesController {
             articleService.addComment(form, Long.valueOf(id));
             return "redirect:/articles/" + id;
         } catch (ArticleDoesNotExistException e) {
+            log.info("Article with id " + id + "was not found");
             return "404";
         }
     }
@@ -104,14 +108,16 @@ public class ArticlesController {
         try {
             articleService.createArticle(form, principal.getName());
         } catch (IncorrectExtensionException e) {
+            log.info("Incorrect extension : " + form.getFile().getOriginalFilename());
             modelMap.addAttribute("incorrect_extension", true);
             return "article_create";
         } catch (EmptyFileException e) {
+            log.info("Empty file has been uploaded");
             modelMap.addAttribute("empty_file", true);
             return "article_create";
         }
         redirectAttributesModelMap.addAttribute("created", true);
-        return "404";
+        return "redirect:/articles";
     }
 
     @GetMapping(value = "/{id}/edit")
@@ -130,6 +136,7 @@ public class ArticlesController {
             modelMap.addAttribute("checkedTags", article.getTags());
             return "article_edit";
         } catch (ArticleDoesNotExistException e) {
+            log.info("Article with id " + id + "was not found");
             return "404";
         }
     }
@@ -147,12 +154,14 @@ public class ArticlesController {
                 redirectAttributesModelMap.addAttribute("updated", true);
                 return "redirect:/articles/" + id;
             } catch (EmptyFileException e) {
+                log.info("Empty file");
                 modelMap.addAttribute("empty_file", true);
                 modelMap.addAttribute("tags", tagService.getTags());
                 modelMap.addAttribute("checkedTags", article.getTags());
                 return "article_edit";
             }
         } catch (ArticleDoesNotExistException e) {
+            log.info("Article with id " + id + "was not found");
             return "404";
         }
     }
@@ -166,6 +175,7 @@ public class ArticlesController {
             modelMap.addAttribute("form", form);
             return "article_edit_image";
         } catch (ArticleDoesNotExistException e) {
+            log.info("Article with id " + id + "was not found");
             return "404";
         }
     }
@@ -182,8 +192,10 @@ public class ArticlesController {
             articleService.updateImage(form, Long.valueOf(id));
             return "redirect:/articles/" + id + "/edit";
         } catch (ArticleDoesNotExistException e) {
+            log.info("Article with id " + id + "was not found");
             return "404";
         } catch (EmptyFileException e) {
+            log.info("Empty file");
             modelMap.addAttribute("article", article);
             modelMap.addAttribute("empty_file", true);
             return "article_edit_image";

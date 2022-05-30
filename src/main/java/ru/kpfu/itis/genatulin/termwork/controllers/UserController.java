@@ -1,5 +1,6 @@
 package ru.kpfu.itis.genatulin.termwork.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -22,6 +23,7 @@ import java.security.Principal;
 
 @Controller
 @RequestMapping(value = "/user")
+@Slf4j
 public class UserController {
     private final UserService userService;
 
@@ -61,9 +63,11 @@ public class UserController {
             redirectAttributesModelMap.addAttribute("changed", true);
             return "redirect:/user";
         } catch (UserWithUsernameAlreadyExistsException e) {
+            log.info("User already exists : " + form.getUsername());
             modelMap.addAttribute("username_error", true);
             return "user_edit";
         } catch (UserWithEmailAlreadyExistsException e) {
+            log.info("User already exists : " + form.getEmail());
             modelMap.addAttribute("email_error", true);
             return "user_edit";
         }
@@ -84,6 +88,7 @@ public class UserController {
             userService.updatePassword(form);
             return "redirect:/user";
         } catch (IncorrectPasswordException e) {
+            log.info("Wrong password submited");
             modelMap.addAttribute("old_password_error", true);
             return "user_password";
         }
@@ -105,6 +110,7 @@ public class UserController {
             userService.updateImage(form);
             return "redirect:/user";
         } catch (EmptyFileException e) {
+            log.info("Empty file");
             modelMap.addAttribute("empty_file", true);
             return "user_edit_image";
         }
