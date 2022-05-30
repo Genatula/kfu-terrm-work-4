@@ -7,6 +7,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 import ru.kpfu.itis.genatulin.termwork.dto.CreateSpeeddateForm;
+import ru.kpfu.itis.genatulin.termwork.dto.UpdateImageForm;
 import ru.kpfu.itis.genatulin.termwork.dto.UpdateSpeeddateForm;
 import ru.kpfu.itis.genatulin.termwork.exceptions.EmptyFileException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.IncorrectExtensionException;
@@ -104,5 +105,38 @@ public class SpeeddatesController {
         speeddateService.updateSpeeddate(form, Long.valueOf(id));
         redirectAttributesModelMap.addAttribute("updated", true);
         return "redirect:/speeddates/" + id;
+    }
+
+    @GetMapping(value = "/{id}/edit/image")
+    public String getUpdateImageForm(@PathVariable String id, ModelMap modelMap) {
+        try {
+            Speeddate speeddate = speeddateService.getSpeeddate(Long.valueOf(id));
+            UpdateImageForm form = new UpdateImageForm();
+            modelMap.addAttribute("speeddate", speeddate);
+            modelMap.addAttribute("form", form);
+            return "speeddate_edit_image";
+        } catch (SpeeddateDoesNotExistException e) {
+            return "404";
+        }
+    }
+
+    @PostMapping(value = "/{id}/edit/image")
+    public String updateImage(@Valid @ModelAttribute("form") UpdateImageForm form, BindingResult result, @PathVariable String id, ModelMap modelMap) {
+        Speeddate speeddate = null;
+        try {
+            speeddate = speeddateService.getSpeeddate(Long.valueOf(id));
+            if (result.hasErrors()) {
+                modelMap.addAttribute("speeddate", speeddate);
+                return "speeddate_edit_image";
+            }
+            speeddateService.updateImage(form, Long.valueOf(id));
+            return "redirect:/speeddates/" + id + "/edit";
+        } catch (SpeeddateDoesNotExistException e) {
+            return "404";
+        } catch (EmptyFileException e) {
+            modelMap.addAttribute("speeddate", speeddate);
+            modelMap.addAttribute("empty_file", true);
+            return "speeddate_edit_image";
+        }
     }
 }

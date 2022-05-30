@@ -2,6 +2,7 @@ package ru.kpfu.itis.genatulin.termwork.services;
 
 import org.springframework.security.core.Authentication;
 import ru.kpfu.itis.genatulin.termwork.dto.CreateSpeeddateForm;
+import ru.kpfu.itis.genatulin.termwork.dto.UpdateImageForm;
 import ru.kpfu.itis.genatulin.termwork.dto.UpdateSpeeddateForm;
 import ru.kpfu.itis.genatulin.termwork.exceptions.EmptyFileException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.IncorrectExtensionException;
@@ -17,4 +18,6 @@ public interface SpeeddateService {
     Speeddate getSpeeddate(Long id) throws SpeeddateDoesNotExistException;
     void createSpeeddate(CreateSpeeddateForm form) throws EmptyFileException, IncorrectExtensionException;
     void updateSpeeddate(UpdateSpeeddateForm form, Long id);
+
+    void updateImage(UpdateImageForm form, Long id) throws EmptyFileException;
 }

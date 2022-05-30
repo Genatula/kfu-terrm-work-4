@@ -89,8 +89,9 @@
                     <span class="error-message text-danger">Target audience for the speed date must be selected</span>
                 </#if>
             </div>
-            <br>
             <button type="submit" class="btn btn-primary mt-3">Save</button>
         </form>
+        <br>
+        <a href="<@spring.url '/speeddates/${speeddate.id}/edit/image'/>">Update image</a>
     </div>
 </@document.document>

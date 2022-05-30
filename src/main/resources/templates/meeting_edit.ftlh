@@ -66,8 +66,9 @@
                 </#if>
                 <label for="time">Enter time</label>
             </div>
-            <br>
             <button type="submit" class="btn btn-primary mt-3">Save</button>
         </form>
+        <br>
+        <a href="<@spring.url '/meetings/${meeting.id}/edit/image'/>">Update image</a>
     </div>
 </@document.document>

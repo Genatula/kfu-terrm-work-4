@@ -3,31 +3,34 @@ package ru.kpfu.itis.genatulin.termwork.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import ru.kpfu.itis.genatulin.termwork.converters.TimeConverter;
 import ru.kpfu.itis.genatulin.termwork.dto.CreateMeetingForm;
+import ru.kpfu.itis.genatulin.termwork.dto.UpdateImageForm;
 import ru.kpfu.itis.genatulin.termwork.dto.UpdateMeetingForm;
-import ru.kpfu.itis.genatulin.termwork.exceptions.EmptyFileException;
-import ru.kpfu.itis.genatulin.termwork.exceptions.FileDoesNotExistException;
-import ru.kpfu.itis.genatulin.termwork.exceptions.IncorrectExtensionException;
-import ru.kpfu.itis.genatulin.termwork.exceptions.MeetingDoesNotExistException;
+import ru.kpfu.itis.genatulin.termwork.exceptions.*;
 import ru.kpfu.itis.genatulin.termwork.models.Meeting;
+import ru.kpfu.itis.genatulin.termwork.models.User;
 import ru.kpfu.itis.genatulin.termwork.repositories.MeetingRepository;
 
 import java.sql.Time;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class MeetingServiceImpl implements MeetingService {
     private final MeetingRepository meetingRepository;
     private final StorageService storageService;
     private final TimeConverter timeConverter;
+    private final UserService userService;
 
     @Autowired
-    public MeetingServiceImpl(MeetingRepository meetingRepository, StorageService storageService, TimeConverter timeConverter) {
+    public MeetingServiceImpl(MeetingRepository meetingRepository, StorageService storageService, TimeConverter timeConverter, UserService userService) {
         this.meetingRepository = meetingRepository;
         this.storageService = storageService;
         this.timeConverter = timeConverter;
+        this.userService = userService;
     }
 
     @Override
@@ -91,6 +94,44 @@ public class MeetingServiceImpl implements MeetingService {
         meeting.setCaption(form.getName());
         meeting.setName(form.getName());
 
+        meetingRepository.save(meeting);
+    }
+
+    @Override
+    public void updateImage(UpdateImageForm form, Long id) throws EmptyFileException {
+        Meeting meeting = meetingRepository.getById(id);
+        MultipartFile file = form.getFile();
+
+        storageService.updateImage(file, meeting.getImage().getFilename());
+    }
+
+    @Override
+    public void addUserToMeeting(Long id) throws MeetingDoesNotExistException, UserAlreadyInEventException {
+        User user = userService.getCurrentUser();
+        if (!checkIfExistsById(id)) {
+            throw new MeetingDoesNotExistException();
+        }
+        Meeting meeting = meetingRepository.getById(id);
+        Set<User> participants = meeting.getParticipants();
+        if (participants.contains(user)) {
+            throw new UserAlreadyInEventException();
+        }
+        participants.add(user);
+        meetingRepository.save(meeting);
+    }
+
+    @Override
+    public void removeUserFromMeeting(Long id) throws MeetingDoesNotExistException, UserDoesNoxExistException {
+        User user = userService.getCurrentUser();
+        if (!checkIfExistsById(id)) {
+            throw new MeetingDoesNotExistException();
+        }
+        Meeting meeting = meetingRepository.getById(id);
+        Set<User> participants = meeting.getParticipants();
+        if (!participants.contains(user)) {
+            throw new UserDoesNoxExistException();
+        }
+        participants.remove(user);
         meetingRepository.save(meeting);
     }
 }

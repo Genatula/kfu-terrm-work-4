@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="<@spring.url '/css/bootstrap.min.css'/>">
     <link rel="stylesheet" href="<@spring.url "/css/" + static_name + ".css"></@spring.url>">
     <link rel="stylesheet" href="<@spring.url "/css/generic.css"></@spring.url>">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="<@spring.url "/js/bootstrap.bundle.min.js"></@spring.url>"></script>
     <script src="<@spring.url "/js/" + static_name + ".js"></@spring.url>"></script>
     <script src="<@spring.url "/js/generic.js"></@spring.url>"></script>

@@ -3,9 +3,11 @@ package ru.kpfu.itis.genatulin.termwork.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import ru.kpfu.itis.genatulin.termwork.converters.TargetConverter;
 import ru.kpfu.itis.genatulin.termwork.converters.TimeConverter;
 import ru.kpfu.itis.genatulin.termwork.dto.CreateSpeeddateForm;
+import ru.kpfu.itis.genatulin.termwork.dto.UpdateImageForm;
 import ru.kpfu.itis.genatulin.termwork.dto.UpdateSpeeddateForm;
 import ru.kpfu.itis.genatulin.termwork.exceptions.EmptyFileException;
 import ru.kpfu.itis.genatulin.termwork.exceptions.FileDoesNotExistException;
@@ -100,5 +102,13 @@ public class SpeeddateServiceImpl implements SpeeddateService {
         speeddate.setCaption(form.getName());
 
         speeddateRepository.save(speeddate);
+    }
+
+    @Override
+    public void updateImage(UpdateImageForm form, Long id) throws EmptyFileException {
+        Speeddate speeddate = speeddateRepository.getById(id);
+        MultipartFile file = form.getFile();
+
+        storageService.updateImage(file, speeddate.getImage().getFilename());
     }
 }
