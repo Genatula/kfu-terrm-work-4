@@ -10,6 +10,11 @@ public enum Target {
     }
 
     public String getValue() {
+        return value.toLowerCase();
+    }
+
+    @Override
+    public String toString() {
         return value;
     }
 }
