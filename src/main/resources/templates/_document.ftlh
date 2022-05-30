@@ -57,9 +57,6 @@
                         </#if>
                     </li>
                 </ul>
-                <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
-                    <input class="form-control" type="search" placeholder="Search" name="search" id="search">
-                </form>
                 <div class="dropdown text-end">
                     <a id="dropdownUser1" class="d-block link-dark text-decoration-none dropdown-toggle" href="<@spring.url '/user'/>" data-bs-toggle="dropdown" aria-expanded="false">
                         Menu

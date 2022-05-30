@@ -13,7 +13,7 @@
                             <h3 class="card-header">${post.getCaption()}</h3>
                             <p class="card-text">${post.getShortDescription()}</p>
                             <div class="d-flex justify-content-between align-items-center">
-                                <a role="button" class="btn btn-sm btn-outline-secondary" href="<@spring.url "/" + post.getUrlPath() + "/" + post.getId()/>">Читать</a>
+                                <a role="button" class="btn btn-sm btn-outline-secondary" href="<@spring.url "/" + post.getUrlPath() + "/" + post.getId()/>">Read</a>
                                 <small class="text-muted">${post.getCreationDate()}</small>
                             </div>
                         </div>

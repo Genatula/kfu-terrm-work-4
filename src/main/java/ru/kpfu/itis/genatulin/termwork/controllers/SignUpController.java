@@ -1,6 +1,7 @@
 package ru.kpfu.itis.genatulin.termwork.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -28,7 +29,10 @@ public class SignUpController {
     }
 
     @GetMapping
-    public String getPage(ModelMap modelMap) {
+    public String getPage(ModelMap modelMap, Authentication authentication) {
+        if (authentication != null) {
+            return "redirect:/feed";
+        }
         SignUpForm form = new SignUpForm();
         modelMap.put("form", form);
         return "register";

@@ -20,5 +20,9 @@
             </div>
             <button type="submit" class="w-100 btn btn-lg btn-primary">Sign in</button>
         </form>
+        <div class="d-grid gap-2 mt-4">
+            <a href="<@spring.url '/register'/>" role="button" class="btn-outline-primary btn">Sign up</a>
+            <a href="<@spring.url '/'/>" role="button" class="btn-outline-danger btn">Main page</a>
+        </div>
     </main>
 </@document.document>

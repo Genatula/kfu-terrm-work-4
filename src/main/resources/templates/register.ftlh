@@ -66,5 +66,9 @@
             </div>
             <button type="submit" class="w-100 btn btn-lg btn-primary">Sign up</button>
         </form>
+        <div class="d-grid gap-2 mt-4">
+            <a href="<@spring.url '/login'/>" role="button" class="btn-outline-primary btn">Sign in</a>
+            <a href="<@spring.url '/'/>" role="button" class="btn-outline-danger btn">Main page</a>
+        </div>
     </main>
 </@document.document>
